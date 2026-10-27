@@ -1,1 +1,32 @@
+# Built binary
 /lindeck
+/dist/
+
+# Go build and test artifacts
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.*
+go.work
+go.work.sum
+
+# Environment
+.env
+.env.*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+Session.vim
+.nvim.lua
+
+# OS
+.DS_Store
+Thumbs.db

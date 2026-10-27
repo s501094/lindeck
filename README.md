@@ -15,6 +15,7 @@ Browse and search the whole apt archive, health-scan your system, and install, r
 [Features](#features) ·
 [Install](#installation) ·
 [Usage](#usage) ·
+[Themes](#themes) ·
 [Keys](#keybindings) ·
 [sudo](#how-sudo-is-handled) ·
 [Structure](#project-structure) ·
@@ -30,7 +31,7 @@ Browse and search the whole apt archive, health-scan your system, and install, r
 
 ## ✨ Features
 
-lindeck has three tabs. Switch between them with <kbd>1</kbd>, <kbd>2</kbd> and <kbd>3</kbd>.
+lindeck has four tabs. Switch between them with <kbd>1</kbd> – <kbd>4</kbd>.
 
 <table>
 <tr>
@@ -109,6 +110,78 @@ Any root action opens a masked `sudo password:` prompt (skipped if sudo already 
 
 ---
 
+<a id="themes"></a>
+
+## 🎨 Themes
+
+lindeck ships with **10 themes**, and you can build your own. Press <kbd>4</kbd> to open the Theme tab:
+
+- **Move** over a theme to preview it live across the whole window.
+- **<kbd>Enter</kbd>** applies it. Your choice is saved, so it's there next time.
+- **Custom:** <kbd>Enter</kbd> on any of the 11 colors below the list to type your own hex value (`#rrggbb` or `#rgb`). Press <kbd>y</kbd> on a theme first to use it as your starting point.
+
+<p align="center"><img src="assets/theme.svg" alt="The Theme tab: 10 themes with color swatches, and the custom color editor" width="900"></p>
+
+<table>
+<tr>
+<td align="center"><img src="assets/themes/solarized-osaka.svg" alt="solarized-osaka" width="100%"><br><b>solarized-osaka</b> <sub>(default)</sub></td>
+<td align="center"><img src="assets/themes/catppuccin-mocha.svg" alt="catppuccin-mocha" width="100%"><br><b>catppuccin-mocha</b></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/themes/tokyonight.svg" alt="tokyonight" width="100%"><br><b>tokyonight</b></td>
+<td align="center"><img src="assets/themes/gruvbox.svg" alt="gruvbox" width="100%"><br><b>gruvbox</b></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/themes/nord.svg" alt="nord" width="100%"><br><b>nord</b></td>
+<td align="center"><img src="assets/themes/dracula.svg" alt="dracula" width="100%"><br><b>dracula</b></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/themes/rose-pine.svg" alt="rose-pine" width="100%"><br><b>rose-pine</b></td>
+<td align="center"><img src="assets/themes/everforest.svg" alt="everforest" width="100%"><br><b>everforest</b></td>
+</tr>
+<tr>
+<td align="center"><img src="assets/themes/kanagawa.svg" alt="kanagawa" width="100%"><br><b>kanagawa</b></td>
+<td align="center"><img src="assets/themes/one-dark.svg" alt="one-dark" width="100%"><br><b>one-dark</b></td>
+</tr>
+</table>
+
+> [!TIP]
+> lindeck never paints the window background, so it works with transparent terminals and background images. Only the selected row gets a background color.
+
+### Custom colors
+
+| Color | Used for |
+|---|---|
+| `border` | Window border and divider lines |
+| `title` | "lindeck" in the top border |
+| `tabs` | Tab line and headings |
+| `text` | Normal text |
+| `dim` | Key hints, descriptions, versions |
+| `accent` | Sections and package icons |
+| `ok` | `✓`, `●`, success messages |
+| `warn` | `▲`, warnings |
+| `error` | `✗`, errors |
+| `selection` | Background of the selected row |
+| `prompt` | Prompt labels like `sudo password:` |
+
+### The config file
+
+Your choice is saved to `~/.config/lindeck/config.json` (or `$XDG_CONFIG_HOME/lindeck/config.json`). Each user has their own, and you can edit it by hand:
+
+```json
+{
+  "theme": "custom",
+  "custom": {
+    "border": "#ff79c6",
+    "selection": "#44475a"
+  }
+}
+```
+
+`theme` is one of the 10 theme names above, or `custom`. Any custom color you leave out uses the default theme's color, and an invalid file just falls back to the default theme with a warning.
+
+---
+
 <a id="prerequisites"></a>
 
 ## 🧰 Prerequisites
@@ -167,7 +240,11 @@ go build -o ~/.local/bin/lindeck .
 rm "$(command -v lindeck)"
 ```
 
-lindeck doesn't write config files or caches anywhere, so removing the binary removes everything.
+To also remove your saved theme:
+
+```sh
+rm -r ~/.config/lindeck
+```
 
 ---
 
@@ -208,7 +285,7 @@ The `install` and `remove` subcommands run apt directly in your terminal. sudo a
 
 | Key | Action |
 |---|---|
-| <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> | Switch to the Installed / Scan / apt tab |
+| <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> | Switch to the Installed / Scan / apt / Theme tab |
 | <kbd>j</kbd> / <kbd>k</kbd> (or arrow keys) | Move down / up |
 | <kbd>g</kbd> / <kbd>G</kbd> | Jump to the top / bottom |
 | <kbd>Ctrl</kbd>+<kbd>d</kbd> / <kbd>Ctrl</kbd>+<kbd>u</kbd> | Half page down / up |
@@ -254,6 +331,17 @@ The `install` and `remove` subcommands run apt directly in your terminal. sudo a
 | <kbd>i</kbd> | Install the selected package |
 | <kbd>d</kbd> | Remove the selected package |
 | <kbd>r</kbd> | Reload the apt index |
+
+</details>
+
+<details>
+<summary><b>🎨 Theme tab</b></summary>
+
+| Key | Action |
+|---|---|
+| <kbd>j</kbd> / <kbd>k</kbd> | Preview themes as you move |
+| <kbd>Enter</kbd> | Apply the theme, or edit the custom color under the cursor |
+| <kbd>y</kbd> | Copy the theme under the cursor into custom, to tweak it |
 
 </details>
 
@@ -323,6 +411,7 @@ lindeck/
 ├── index.go     Loads the full apt package index into memory; search and sections
 ├── apt.go       Installed packages, the health scan, package details, opening homepages
 ├── sudo.go      Password check and running commands as root with streamed output
+├── theme.go     The 10 themes, custom colors, and loading / saving config.json
 ├── assets/      Screenshots used in this README
 ├── go.mod       Module definition and dependencies
 └── go.sum
@@ -334,6 +423,7 @@ lindeck/
 | `tui.go` | The `model` holds all UI state: current tab, installed list, apt index, scan results, cursor memory per view, the active prompt, the running job and its output. `Update` handles keys and background results, and `View` draws the window. Rows are built only for the items on screen, so a search with tens of thousands of results stays fast. |
 | `index.go` | `loadIndex` parses `apt-cache dumpavail` (about 88k packages) into a map and a sorted list, and counts packages per section. `"universe/devel"` and `"devel"` are merged into one section. `Search` ranks matches, and `InSection` lists a section. |
 | `apt.go` | `loadInstalled` combines `dpkg-query` (versions, descriptions, dpkg state) with `apt-mark showmanual`. `runScan` builds the health report from dpkg states, `apt list --upgradable`, `apt-mark showhold` and a dry run of `apt-get -s autoremove`. `pkgDetails` formats `apt-cache show` output. `openURL` uses `wslview` or `xdg-open`. |
+| `theme.go` | `Theme` holds the 11 colors. `presets` are the built-in themes. `loadConfig` / `saveConfig` read and write `config.json`, `resolve` fills in missing custom colors, and `applyTheme` rebuilds every style the UI draws with. |
 | `sudo.go` | `sudoCached`, `sudoValidate`, `sudoStream` (runs a root command in the background and sends each output line back to the UI) and `sudoInteractive` (used by the command-line mode). |
 
 **Built with** [Bubble Tea](https://github.com/charmbracelet/bubbletea) (TUI framework), [Bubbles](https://github.com/charmbracelet/bubbles) (text inputs) and [Lip Gloss](https://github.com/charmbracelet/lipgloss) (colors and layout).
@@ -418,10 +508,11 @@ An install was interrupted. Run `sudo dpkg --configure -a`, then rescan with <kb
 - [x] apt backend: browse, search, install, remove, upgrade
 - [x] Health scan with upgrade / autoremove actions
 - [x] In-app sudo prompt with streamed output
+- [x] 10 themes plus custom colors, saved per user
 - [ ] **No-sudo sources:** GitHub release binaries and AppImages into `~/.local/bin`, plus Flatpak `--user`
 - [ ] **More backends:** dnf and pacman, detected automatically
 - [ ] **Lockfile and sync:** save your installed set and rebuild it on another machine with `lindeck sync`
-- [ ] **Configuration:** window size, colors and icons
+- [ ] **More configuration:** window size and icons
 
 ---
 

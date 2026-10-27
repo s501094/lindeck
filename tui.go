@@ -1,10 +1,12 @@
 package main
 
-// Floating-window UI with three tabs: Installed, Scan, apt (search/browse).
+// Floating-window UI with four tabs: Installed, Scan, apt (search/browse),
+// and Theme.
 // Layout and keys mirror plugdeck.nvim.
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
@@ -12,27 +14,11 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-// solarized palette, to sit alongside solarized-osaka in nvim
+// Styles the UI draws with. applyTheme (theme.go) sets them from the
+// selected theme before the first frame.
 var (
-	cBase01 = lipgloss.Color("#586e75")
-	cBase02 = lipgloss.Color("#073642")
-	cBase0  = lipgloss.Color("#839496")
-	cYellow = lipgloss.Color("#b58900")
-	cOrange = lipgloss.Color("#cb4b16")
-	cRed    = lipgloss.Color("#dc322f")
-	cBlue   = lipgloss.Color("#268bd2")
-	cCyan   = lipgloss.Color("#2aa198")
-	cGreen  = lipgloss.Color("#859900")
-
-	sText    = lipgloss.NewStyle().Foreground(cBase0)
-	sTitle   = lipgloss.NewStyle().Foreground(cOrange).Bold(true)
-	sComment = lipgloss.NewStyle().Foreground(cBase01)
-	sOk      = lipgloss.NewStyle().Foreground(cGreen)
-	sWarn    = lipgloss.NewStyle().Foreground(cYellow)
-	sErr     = lipgloss.NewStyle().Foreground(cRed)
-	sDir     = lipgloss.NewStyle().Foreground(cCyan)
-	sBorder  = lipgloss.NewStyle().Foreground(cBase01)
-	sWinTtl  = lipgloss.NewStyle().Foreground(cBlue).Bold(true)
+	sText, sTitle, sComment, sOk, sWarn, sErr lipgloss.Style
+	sDir, sBorder, sWinTtl, sPrompt           lipgloss.Style
 )
 
 var icons = struct{ ok, warn, err, unknown, manual, auto string }{
@@ -45,6 +31,7 @@ const (
 	tabInstalled tab = iota
 	tabScan
 	tabApt
+	tabTheme
 )
 
 type (
@@ -86,6 +73,9 @@ type item struct {
 	inst    *Inst
 	check   *Check
 	section string
+	theme   string // preset name, or customName, on the Theme tab
+	isSlot  bool   // a custom color row on the Theme tab
+	slot    int    // index into slots when isSlot
 }
 
 type model struct {
@@ -111,7 +101,10 @@ type model struct {
 	offset map[string]int
 
 	input     textinput.Model
-	inputKind string // "" | "search" | "add" | "password"
+	inputKind string // "" | "search" | "add" | "password" | "color"
+	editSlot  int    // slot being edited by the "color" prompt
+
+	cfg Config // saved settings; the theme in use comes from here
 
 	details      []string
 	detailsTitle string
@@ -123,19 +116,22 @@ type model struct {
 }
 
 func newModel(query string) model {
-	in := textinput.New()
-	in.Cursor.Style = lipgloss.NewStyle().Foreground(cBlue)
-	in.TextStyle = sText
-	in.PromptStyle = sTitle
+	cfg, cfgErr := loadConfig()
+	applyTheme(cfg.resolve())
 
 	m := model{
+		cfg:        cfg,
 		tab:        tabInstalled,
 		instSet:    map[string]bool{},
 		idxLoading: true,
 		aptView:    "sections",
 		cursor:     map[string]int{},
 		offset:     map[string]int{},
-		input:      in,
+		input:      textinput.New(),
+	}
+	m.styleInput()
+	if cfgErr != nil {
+		m.setStatus(sErr, "%v — using the default theme", cfgErr)
 	}
 	if query != "" {
 		m.tab = tabApt
@@ -199,6 +195,8 @@ func (m model) ctx() string {
 		return "installed"
 	case tabScan:
 		return "scan"
+	case tabTheme:
+		return "theme"
 	}
 	if m.aptView == "sections" {
 		return "apt:sections"
@@ -274,7 +272,40 @@ func (m *model) start(j *job, password string) tea.Cmd {
 // Update
 // ---------------------------------------------------------------------------
 
+// Update handles a message, then applies the theme to draw with: the one
+// under the cursor while browsing the Theme tab, otherwise the saved one.
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	next, cmd := m.update(msg)
+	if nm, ok := next.(model); ok {
+		applyTheme(nm.previewTheme())
+		nm.styleInput()
+		next = nm
+	}
+	return next, cmd
+}
+
+func (m model) previewTheme() Theme {
+	if m.tab == tabTheme && m.inputKind == "" {
+		items := m.items()
+		if c := m.cur(); c < len(items) {
+			if items[c].theme == customName || items[c].isSlot {
+				return m.customTheme()
+			}
+			if t, ok := preset(items[c].theme); ok {
+				return t
+			}
+		}
+	}
+	return m.cfg.resolve()
+}
+
+func (m *model) styleInput() {
+	m.input.Cursor.Style = sWinTtl
+	m.input.TextStyle = sText
+	m.input.PromptStyle = sPrompt
+}
+
+func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width, m.height = msg.Width, msg.Height
@@ -394,6 +425,12 @@ func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 		return m, m.switchTab(tabScan)
 	case "3":
 		m.tab = tabApt
+	case "4":
+		m.tab = tabTheme
+	case "y":
+		if m.tab == tabTheme && sel != nil && sel.theme != "" {
+			return m, m.copyToCustom(sel.theme)
+		}
 	case "j", "down":
 		move(m.cur() + 1)
 	case "k", "up":
@@ -462,6 +499,9 @@ func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 		if sel == nil {
 			return m, nil
 		}
+		if m.tab == tabTheme {
+			return m, m.themeEnter(*sel)
+		}
 		if sel.section != "" {
 			m.openSection(sel.section)
 			return m, nil
@@ -527,6 +567,8 @@ func (m model) handleInput(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 			if val != "" {
 				return m, m.runRoot(aptJob("install "+val, "install", "--", val))
 			}
+		case "color":
+			m.setColor(m.editSlot, val)
 		}
 		return m, nil
 	}
@@ -556,7 +598,7 @@ func (m *model) openHomepage(name string) {
 // ---------------------------------------------------------------------------
 
 func (m model) tabLine() []seg {
-	tabs := []string{"1:Installed", "2:Scan", "3:apt"}
+	tabs := []string{"1:Installed", "2:Scan", "3:apt", "4:Theme"}
 	var parts []string
 	for i, t := range tabs {
 		if tab(i) == m.tab {
@@ -571,12 +613,14 @@ func (m model) tabLine() []seg {
 func (m model) footer() string {
 	switch m.tab {
 	case tabInstalled:
-		return "a:add  d:remove  m:manual/all  r:refresh  <CR>:details  o:homepage  1/2/3:tabs  q:quit"
+		return "a:add  d:remove  m:manual/all  r:refresh  <CR>:details  o:homepage  1-4:tabs  q:quit"
 	case tabScan:
 		return "s:rescan  u:upgrade  U:upgrade all  A:autoremove  R:apt update  <CR>:details  q:quit"
+	case tabTheme:
+		return "<CR>:apply theme / edit color  y:copy theme into custom  1-4:tabs  q:quit"
 	}
 	if m.aptView == "sections" {
-		return "<CR>:browse section  /:search  <BS>:back to packages  r:refresh  1/2/3:tabs  q:quit"
+		return "<CR>:browse section  /:search  <BS>:back to packages  r:refresh  1-4:tabs  q:quit"
 	}
 	return "t:sections  /:search  <CR>:details  i:install  d:remove  o:homepage  <BS>:sections  q:quit"
 }
@@ -588,6 +632,16 @@ func (m model) header() [][]seg {
 	case tabInstalled:
 		if m.inst == nil {
 			return line("  reading dpkg database …", sComment)
+		}
+	case tabTheme:
+		path, _ := configPath()
+		if home, err := os.UserHomeDir(); err == nil && strings.HasPrefix(path, home+"/") {
+			path = "~" + path[len(home):]
+		}
+		return [][]seg{
+			{{"  themes — current: ", sText}, {m.cfg.Theme, sTitle}, {"   (move to preview, <CR> to apply)", sComment}},
+			{{"  saved to " + path, sComment}},
+			{},
 		}
 	case tabScan:
 		if m.scan == nil {
@@ -641,6 +695,14 @@ func (m model) items() []item {
 		for i := range m.scan {
 			items = append(items, item{name: m.scan[i].Name, check: &m.scan[i]})
 		}
+	case tabTheme:
+		for _, p := range presets {
+			items = append(items, item{theme: p.Name})
+		}
+		items = append(items, item{theme: customName})
+		for i := range slots {
+			items = append(items, item{isSlot: true, slot: i})
+		}
 	case tabApt:
 		if m.idx == nil || m.idxLoading {
 			break
@@ -661,6 +723,8 @@ func (m model) items() []item {
 // rowCount is how many rows rows(it) will return, without building them.
 func rowCount(it item) int {
 	switch {
+	case it.theme == customName:
+		return 3 // blank line, the custom row, its explanation
 	case it.check != nil:
 		return max(len(it.check.Notes), 1)
 	case it.pkg != nil:
@@ -671,6 +735,10 @@ func rowCount(it item) int {
 
 func (m model) rows(it item) [][]seg {
 	switch {
+	case it.theme != "":
+		return m.themeRows(it.theme)
+	case it.isSlot:
+		return m.slotRows(it.slot)
 	case it.inst != nil:
 		in := it.inst
 		icon, status, nameSt := icons.auto, "auto", sText
@@ -766,7 +834,7 @@ func renderRow(segs []seg, w int, selected bool) string {
 		}
 		st := s.s
 		if selected {
-			st = st.Background(cBase02)
+			st = st.Background(selBg)
 		}
 		last = st
 		t := []rune(s.t)
@@ -797,7 +865,7 @@ func (m model) View() string {
 
 	add(m.tabLine(), false)
 	add([]seg{{"  " + m.footer(), sComment}}, false)
-	add([]seg{{strings.Repeat("─", iw), sComment}}, false)
+	add([]seg{{strings.Repeat("─", iw), sBorder}}, false)
 
 	bh := m.bodyHeight()
 	if m.details != nil {
@@ -818,7 +886,7 @@ func (m model) View() string {
 	}
 
 	if m.output != nil {
-		add([]seg{{"─ output " + strings.Repeat("─", iw), sComment}}, false)
+		add([]seg{{"─ output " + strings.Repeat("─", iw), sBorder}}, false)
 		tail := m.output[max(len(m.output)-outputRows, 0):]
 		for i := 0; i < outputRows; i++ {
 			if i < len(tail) {
@@ -917,4 +985,99 @@ func trunc(s string, n int) string {
 		return s
 	}
 	return string(r[:max(n-1, 0)]) + "…"
+}
+
+// ---------------------------------------------------------------------------
+// Theme tab
+// ---------------------------------------------------------------------------
+
+// swatches renders a theme's palette as a row of colored blocks.
+func swatches(t Theme) []seg {
+	var out []seg
+	for _, s := range slots {
+		out = append(out, seg{"██", lipgloss.NewStyle().Foreground(lipgloss.Color(*s.get(&t)))}, seg{" ", sText})
+	}
+	return out
+}
+
+func (m model) themeRows(name string) [][]seg {
+	mark, mst := "  ", sText
+	if m.cfg.Theme == name {
+		mark, mst = "✓ ", sOk
+	}
+	if name == customName {
+		t := m.customTheme()
+		row := append([]seg{{"  ", sText}, {mark, mst}, {fmt.Sprintf("%-20s", name), sText}}, swatches(t)...)
+		return [][]seg{{}, row, {{"      your own colors — <CR> on a color below to change it, or y on a theme to start from it", sComment}}}
+	}
+	t, _ := preset(name)
+	return [][]seg{append([]seg{{"  ", sText}, {mark, mst}, {fmt.Sprintf("%-20s", name), sText}}, swatches(t)...)}
+}
+
+func (m model) slotRows(i int) [][]seg {
+	t := m.customTheme()
+	v := *slots[i].get(&t)
+	return [][]seg{{
+		{fmt.Sprintf("      %-12s", slots[i].name), sText},
+		{"████ ", lipgloss.NewStyle().Foreground(lipgloss.Color(v))},
+		{v, sComment},
+	}}
+}
+
+// customTheme is the custom palette. Until one is saved it starts as a copy
+// of the theme in use, so editing a color tweaks what you're looking at.
+func (m model) customTheme() Theme {
+	if m.cfg.Custom == nil {
+		return m.cfg.resolve()
+	}
+	return Config{Theme: customName, Custom: m.cfg.Custom}.resolve()
+}
+
+func (m *model) save(msg string) {
+	if err := saveConfig(m.cfg); err != nil {
+		m.setStatus(sErr, "could not save theme: %v", err)
+		return
+	}
+	m.setStatus(sOk, "✓ %s", msg)
+}
+
+func (m *model) themeEnter(it item) tea.Cmd {
+	switch {
+	case it.isSlot:
+		m.editSlot = it.slot
+		t := m.customTheme()
+		cmd := m.prompt("color", slots[it.slot].name+" color (#rrggbb): ")
+		m.input.SetValue(*slots[it.slot].get(&t))
+		m.input.CursorEnd()
+		return cmd
+	case it.theme != "":
+		m.cfg.Theme = it.theme
+		m.save("theme set to " + it.theme)
+	}
+	return nil
+}
+
+// copyToCustom seeds the custom palette from a theme so it can be tweaked.
+func (m *model) copyToCustom(name string) tea.Cmd {
+	t, ok := preset(name)
+	if !ok {
+		t = m.customTheme()
+	}
+	m.cfg.Custom = &t
+	m.cfg.Theme = customName
+	m.save("copied " + name + " into custom — edit its colors below")
+	return nil
+}
+
+func (m *model) setColor(i int, val string) {
+	hex, ok := normalizeHex(val)
+	if !ok {
+		m.setStatus(sErr, "%q isn't a hex color — use #rrggbb, like #b4befe", val)
+		return
+	}
+	t := m.customTheme()
+	*slots[i].get(&t) = hex
+	m.cfg.Custom = &t
+	m.cfg.Theme = customName
+	m.save(fmt.Sprintf("%s set to %s (theme: custom)", slots[i].name, hex))
 }

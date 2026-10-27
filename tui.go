@@ -1,17 +1,18 @@
 package main
 
-// Floating-window UI with four tabs: Installed, Scan, apt (search/browse),
-// and Theme.
-// Layout and keys mirror plugdeck.nvim.
+// Floating-window UI with five tabs: Installed, Scan, Browse, Sources and
+// Theme. Layout and keys mirror plugdeck.nvim.
 
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/mattn/go-runewidth"
 )
 
 // Styles the UI draws with. applyTheme (theme.go) sets them from the
@@ -31,35 +32,42 @@ type tab int
 const (
 	tabInstalled tab = iota
 	tabScan
-	tabApt
+	tabBrowse
+	tabSources
 	tabTheme
 )
 
 type (
-	idxMsg struct {
+	catalogMsg struct {
+		src string
 		idx *Index
 		err error
 	}
-	instMsg    []Inst
+	searchMsg struct {
+		src, query string
+		pkgs       []*Pkg
+		err        error
+	}
+	instMsg struct {
+		src  string
+		list []Inst
+		err  error
+	}
+	reposMsg struct {
+		src   string
+		repos []Repo
+		err   error
+	}
 	scanMsg    []Check
 	detailsMsg struct {
-		title string
-		lines []string
+		title, src string
+		lines      []string
 	}
 	validatedMsg struct{ err error }
 	lineMsg      string
 	linesDoneMsg struct{}
 	runDoneMsg   struct{ err error }
 )
-
-// job is a root command run in the background with its output streamed in.
-type job struct {
-	label  string
-	args   []string
-	reload bool // reload the apt index afterwards (apt update)
-	lines  chan string
-	done   chan error
-}
 
 // seg is a styled run of text; a row is a slice of them.
 type seg struct {
@@ -77,38 +85,54 @@ type item struct {
 	theme   string // preset name, or customName, on the Theme tab
 	isSlot  bool   // a custom color row on the Theme tab
 	slot    int    // index into slots when isSlot
+	src     *Source
+	repo    *Repo
+	addNew  bool // the "add a custom package manager" row
 }
 
 type model struct {
 	width, height int
 	tab           tab
 
-	inst    []Inst
-	instSet map[string]bool
-	showAll bool
+	cfg     Config    // saved settings: theme, custom sources, disabled sources
+	sources []*Source // every known source, built-in then custom
 
-	idx        *Index
-	idxLoading bool
-	idxErr     error
-	aptView    string // "sections" | "packages"
-	query      string
-	results    []*Pkg
-	pendingQ   *string // search requested before the index finished loading
+	inst       map[string][]Inst // installed packages per source
+	instErr    map[string]error
+	instSet    map[string]bool // "source/name" → installed
+	instFilter string          // "" = all sources
+	showAll    bool            // include dependencies (apt auto, snap bases)
+
+	browse   string            // source shown on the Browse tab
+	catalogs map[string]*Index // loaded catalogs, by source
+	loading  map[string]bool   // catalog or search in flight
+	loadErr  map[string]error
+	view     string // "sections" | "packages"
+	query    string
+	results  []*Pkg
+	pendingQ *string // search requested before the catalog finished loading
 
 	scan     []Check
 	scanning bool
+
+	repos       map[string][]Repo
+	repoErr     map[string]error
+	reposLoaded bool
 
 	cursor map[string]int // per-view cursor memory, keyed by context
 	offset map[string]int
 
 	input     textinput.Model
-	inputKind string // "" | "search" | "add" | "password" | "color"
+	inputKind string // "" | "search" | "add" | "password" | "color" | "repo" | "confirm" | "form"
 	editSlot  int    // slot being edited by the "color" prompt
-
-	cfg Config // saved settings; the theme in use comes from here
+	repoSrc   string // source a "repo" prompt adds to
+	onConfirm func(m *model) tea.Cmd
+	form      *CustomSource
+	formStep  int
 
 	details      []string
 	detailsTitle string
+	detailsSrc   string
 
 	pending *job // waiting on a password
 	job     *job // running
@@ -121,47 +145,147 @@ func newModel(query string) model {
 	applyTheme(cfg.resolve())
 
 	m := model{
-		cfg:        cfg,
-		tab:        tabInstalled,
-		instSet:    map[string]bool{},
-		idxLoading: true,
-		aptView:    "sections",
-		cursor:     map[string]int{},
-		offset:     map[string]int{},
-		input:      textinput.New(),
+		cfg:      cfg,
+		sources:  allSources(cfg),
+		tab:      tabInstalled,
+		inst:     map[string][]Inst{},
+		instErr:  map[string]error{},
+		instSet:  map[string]bool{},
+		browse:   "apt",
+		catalogs: map[string]*Index{},
+		loading:  map[string]bool{"apt": true},
+		loadErr:  map[string]error{},
+		view:     "sections",
+		repos:    map[string][]Repo{},
+		repoErr:  map[string]error{},
+		cursor:   map[string]int{},
+		offset:   map[string]int{},
+		input:    textinput.New(),
 	}
 	m.styleInput()
 	if cfgErr != nil {
 		m.setStatus(sErr, "%v — using the default theme", cfgErr)
 	}
 	if query != "" {
-		m.tab = tabApt
+		m.tab = tabBrowse
 		m.pendingQ = &query
 	}
 	return m
 }
 
 func (m model) Init() tea.Cmd {
-	return tea.Batch(cmdIndex, cmdInstalled)
+	cmds := []tea.Cmd{cmdCatalog(m.src("apt"))}
+	for _, s := range m.active() {
+		cmds = append(cmds, cmdInstalled(s))
+	}
+	return tea.Batch(cmds...)
 }
 
-func cmdIndex() tea.Msg {
-	idx, err := loadIndex()
-	return idxMsg{idx, err}
+// ---------------------------------------------------------------------------
+// Background commands
+// ---------------------------------------------------------------------------
+
+func cmdCatalog(s *Source) tea.Cmd {
+	return func() tea.Msg {
+		pkgs, err := s.catalog(s)
+		return catalogMsg{s.ID, newIndex(pkgs, s.Sections), err}
+	}
 }
 
-func cmdInstalled() tea.Msg { return instMsg(loadInstalled()) }
-
-func cmdScan(inst []Inst) tea.Cmd {
-	return func() tea.Msg { return scanMsg(runScan(inst)) }
+func cmdSearch(s *Source, q string) tea.Cmd {
+	return func() tea.Msg {
+		pkgs, err := s.search(s, q)
+		return searchMsg{s.ID, q, pkgs, err}
+	}
 }
 
-func cmdDetails(name string) tea.Cmd {
-	return func() tea.Msg { return detailsMsg{name, pkgDetails(name)} }
+func cmdInstalled(s *Source) tea.Cmd {
+	if s.installed == nil {
+		return nil
+	}
+	return func() tea.Msg {
+		list, err := s.installed(s)
+		return instMsg{s.ID, list, err}
+	}
+}
+
+func cmdRepos(s *Source) tea.Cmd {
+	return func() tea.Msg {
+		r, err := s.repos(s)
+		return reposMsg{s.ID, r, err}
+	}
+}
+
+func cmdDetails(s *Source, p *Pkg) tea.Cmd {
+	return func() tea.Msg {
+		lines := []string{"no details available"}
+		if s.info != nil {
+			lines = s.info(s, p)
+		}
+		return detailsMsg{p.Name, s.ID, lines}
+	}
 }
 
 func cmdValidate(pw string) tea.Cmd {
 	return func() tea.Msg { return validatedMsg{sudoValidate(pw)} }
+}
+
+// cmdScan health-checks every active source: apt's full scan, plus pending
+// upgrades for the others.
+func (m model) cmdScan() tea.Cmd {
+	srcs := m.active()
+	inst := map[string][]Inst{}
+	for k, v := range m.inst {
+		inst[k] = v
+	}
+	return func() tea.Msg { return scanMsg(scanAll(srcs, inst)) }
+}
+
+func scanAll(srcs []*Source, inst map[string][]Inst) []Check {
+	var checks []Check
+	for _, s := range srcs {
+		if s.ID == "apt" {
+			checks = append(checks, runScan(inst["apt"])...)
+			continue
+		}
+		byName := map[string]*Check{}
+		for _, in := range inst[s.ID] {
+			if in.Manual {
+				byName[in.Name] = &Check{Source: s.ID, Name: in.Name, Status: "ok"}
+			}
+		}
+		if s.outdated != nil {
+			up, _ := s.outdated(s)
+			for name, ver := range up {
+				c := byName[name]
+				if c == nil {
+					c = &Check{Source: s.ID, Name: name}
+					byName[name] = c
+				}
+				c.Status = "warn"
+				c.Notes = append(c.Notes, "upgradable → "+ver)
+			}
+		}
+		for _, c := range byName {
+			checks = append(checks, *c)
+		}
+	}
+	order := map[string]int{"err": 0, "warn": 1, "ok": 2}
+	srcOrder := map[string]int{}
+	for i, s := range srcs {
+		srcOrder[s.ID] = i
+	}
+	sort.SliceStable(checks, func(i, j int) bool {
+		a, b := checks[i], checks[j]
+		if order[a.Status] != order[b.Status] {
+			return order[a.Status] < order[b.Status]
+		}
+		if a.Source != b.Source {
+			return srcOrder[a.Source] < srcOrder[b.Source]
+		}
+		return a.Name < b.Name
+	})
+	return checks
 }
 
 func waitLine(j *job) tea.Cmd {
@@ -177,32 +301,60 @@ func waitDone(j *job) tea.Cmd {
 	return func() tea.Msg { return runDoneMsg{<-j.done} }
 }
 
-func aptJob(label string, args ...string) *job {
-	full := append([]string{"apt-get"}, args[:1]...)
-	full = append(full, "-y", "-o", "Dpkg::Progress-Fancy=0")
-	return &job{label: label, args: append(full, args[1:]...)}
+// ---------------------------------------------------------------------------
+// Sources and state helpers
+// ---------------------------------------------------------------------------
+
+func (m model) src(id string) *Source {
+	for _, s := range m.sources {
+		if s.ID == id {
+			return s
+		}
+	}
+	return nil
 }
 
-// ---------------------------------------------------------------------------
-// State helpers
-// ---------------------------------------------------------------------------
+func (m model) disabled(id string) bool {
+	for _, d := range m.cfg.Disabled {
+		if d == id {
+			return true
+		}
+	}
+	return false
+}
+
+// active is every source that's installed and not disabled; apt is always on.
+func (m model) active() []*Source {
+	var res []*Source
+	for _, s := range m.sources {
+		if s.ID == "apt" || (!m.disabled(s.ID) && s.Available()) {
+			res = append(res, s)
+		}
+	}
+	return res
+}
+
+func (m model) browseSrc() *Source {
+	if s := m.src(m.browse); s != nil {
+		return s
+	}
+	return m.sources[0]
+}
+
+func (m model) isInstalled(src, name string) bool { return m.instSet[src+"/"+name] }
 
 func (m model) ctx() string {
 	switch m.tab {
 	case tabInstalled:
-		if m.showAll {
-			return "installed:all"
-		}
-		return "installed"
+		return fmt.Sprintf("installed:%s:%v", m.instFilter, m.showAll)
 	case tabScan:
 		return "scan"
+	case tabSources:
+		return "sources"
 	case tabTheme:
 		return "theme"
 	}
-	if m.aptView == "sections" {
-		return "apt:sections"
-	}
-	return "apt:packages:" + m.query
+	return "browse:" + m.browse + ":" + m.view + ":" + m.query
 }
 
 func (m model) cur() int { return m.cursor[m.ctx()] }
@@ -211,25 +363,96 @@ func (m *model) setStatus(style lipgloss.Style, format string, a ...any) {
 	m.status = []seg{{fmt.Sprintf(format, a...), style}}
 }
 
-func (m *model) search(q string) {
-	m.query = q
-	m.aptView = "packages"
-	m.results = m.idx.Search(q)
+// setBrowse shows a source on the Browse tab, loading its catalog if needed.
+func (m *model) setBrowse(id string) tea.Cmd {
+	s := m.src(id)
+	m.browse, m.query, m.results = id, "", nil
+	m.view = "packages"
+	if s.Sections {
+		m.view = "sections"
+	}
+	if !s.Catalog {
+		return nil
+	}
+	if idx := m.catalogs[id]; idx != nil {
+		m.results = idx.all
+		return nil
+	}
+	if !m.loading[id] {
+		m.loading[id] = true
+		return cmdCatalog(s)
+	}
+	return nil
+}
+
+// cycle returns the ID dir steps away from cur in ids, wrapping around.
+func cycle(ids []string, cur string, dir int) string {
+	for i, id := range ids {
+		if id == cur {
+			return ids[(i+dir+len(ids))%len(ids)]
+		}
+	}
+	return ids[0]
+}
+
+func (m model) activeIDs() []string {
+	var ids []string
+	for _, s := range m.active() {
+		ids = append(ids, s.ID)
+	}
+	return ids
+}
+
+func (m *model) search(q string) tea.Cmd {
+	s := m.browseSrc()
+	m.query, m.view = q, "packages"
+	if s.Catalog {
+		if idx := m.catalogs[s.ID]; idx != nil {
+			m.results = idx.Search(q)
+		} else {
+			m.pendingQ = &q
+		}
+		return nil
+	}
+	if s.search == nil {
+		m.setStatus(sWarn, "%s has no search command", s.Name)
+		return nil
+	}
+	m.results = nil
+	if strings.TrimSpace(q) == "" {
+		return nil
+	}
+	m.loading[s.ID] = true
+	return cmdSearch(s, q)
 }
 
 func (m *model) openSection(name string) {
 	m.query = "section:" + name
-	m.aptView = "packages"
-	m.results = m.idx.InSection(name)
+	m.view = "packages"
+	m.results = m.catalogs[m.browse].InSection(name)
 }
 
 func (m *model) switchTab(t tab) tea.Cmd {
 	m.tab = t
-	if t == tabScan && m.scan == nil && !m.scanning {
+	switch {
+	case t == tabScan && m.scan == nil && !m.scanning:
 		m.scanning = true
-		return cmdScan(m.inst)
+		return m.cmdScan()
+	case t == tabSources && !m.reposLoaded:
+		return m.loadRepos()
 	}
 	return nil
+}
+
+func (m *model) loadRepos() tea.Cmd {
+	m.reposLoaded = true
+	var cmds []tea.Cmd
+	for _, s := range m.active() {
+		if s.repos != nil {
+			cmds = append(cmds, cmdRepos(s))
+		}
+	}
+	return tea.Batch(cmds...)
 }
 
 func (m *model) prompt(kind, label string) tea.Cmd {
@@ -244,13 +467,23 @@ func (m *model) prompt(kind, label string) tea.Cmd {
 	return m.input.Focus()
 }
 
-// runRoot starts j, asking for the sudo password first unless it's cached.
-func (m *model) runRoot(j *job) tea.Cmd {
+// confirm asks a yes/no question and runs fn on yes.
+func (m *model) confirm(question string, fn func(m *model) tea.Cmd) tea.Cmd {
+	m.onConfirm = fn
+	return m.prompt("confirm", question+" (y/N): ")
+}
+
+// runJob starts j, asking for the sudo password first when the chain needs
+// root and sudo hasn't cached your credentials.
+func (m *model) runJob(j *job) tea.Cmd {
+	if j == nil {
+		return nil
+	}
 	if m.job != nil {
 		m.setStatus(sWarn, "wait for %s to finish", m.job.label)
 		return nil
 	}
-	if sudoCached() {
+	if !j.needsPassword() || sudoCached() {
 		return m.start(j, "")
 	}
 	m.pending = j
@@ -263,10 +496,50 @@ func (m *model) runRoot(j *job) tea.Cmd {
 func (m *model) start(j *job, password string) tea.Cmd {
 	j.lines, j.done = make(chan string, 64), make(chan error, 1)
 	m.job, m.pending = j, nil
-	m.output = []string{"$ sudo " + strings.Join(j.args, " ")}
+	prefix := "$ "
+	if j.root {
+		prefix = "$ sudo "
+	}
+	if m.output == nil {
+		m.output = []string{}
+	}
+	m.output = append(m.output, prefix+strings.Join(j.args, " "))
 	m.setStatus(sWarn, "%s …", j.label)
-	go sudoStream(password, j.args, j.lines, j.done)
+	go runStream(j, password, j.lines, j.done)
 	return waitLine(j)
+}
+
+// afterJob refreshes whatever a finished job changed.
+func (m *model) afterJob(j *job) []tea.Cmd {
+	var cmds []tea.Cmd
+	if j.reloadSource != "" {
+		if s := m.src(j.reloadSource); s != nil {
+			cmds = append(cmds, cmdInstalled(s))
+		}
+	}
+	if j.reloadRepos != "" {
+		if s := m.src(j.reloadRepos); s != nil {
+			if s.repos != nil {
+				cmds = append(cmds, cmdRepos(s))
+			}
+			if s.Catalog {
+				m.loading[s.ID] = true
+				cmds = append(cmds, cmdCatalog(s))
+			}
+		}
+	}
+	if j.redetect {
+		m.sources = allSources(m.cfg) // pick up the newly installed manager
+		for _, s := range m.active() {
+			cmds = append(cmds, cmdInstalled(s))
+		}
+		m.reposLoaded = false
+		if m.tab == tabSources {
+			cmds = append(cmds, m.loadRepos())
+		}
+	}
+	m.scan, m.scanning = nil, false // rescan once the installed lists refresh
+	return cmds
 }
 
 // ---------------------------------------------------------------------------
@@ -311,29 +584,56 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width, m.height = msg.Width, msg.Height
 
-	case idxMsg:
-		m.idxLoading, m.idx, m.idxErr = false, msg.idx, msg.err
-		if m.idx != nil && m.pendingQ != nil {
-			m.search(*m.pendingQ)
-			m.pendingQ = nil
+	case catalogMsg:
+		m.loading[msg.src], m.loadErr[msg.src] = false, msg.err
+		if msg.err == nil {
+			m.catalogs[msg.src] = msg.idx
+		}
+		if msg.src == m.browse && msg.err == nil {
+			switch {
+			case m.pendingQ != nil:
+				q := *m.pendingQ
+				m.pendingQ = nil
+				return m, m.search(q)
+			case m.query == "":
+				m.results = msg.idx.all
+			case strings.HasPrefix(m.query, "section:"):
+				m.openSection(strings.TrimPrefix(m.query, "section:"))
+			default:
+				m.results = msg.idx.Search(m.query)
+			}
+		}
+
+	case searchMsg:
+		if msg.src == m.browse && msg.query == m.query {
+			m.loading[msg.src], m.loadErr[msg.src] = false, msg.err
+			m.results = msg.pkgs
 		}
 
 	case instMsg:
-		m.inst = msg
+		m.instErr[msg.src] = msg.err
+		if msg.err == nil || msg.list != nil {
+			m.inst[msg.src] = msg.list
+		}
 		m.instSet = map[string]bool{}
-		for _, in := range m.inst {
-			m.instSet[in.Name] = true
+		for src, list := range m.inst {
+			for _, in := range list {
+				m.instSet[src+"/"+in.Name] = true
+			}
 		}
 		if m.tab == tabScan && m.scan == nil && !m.scanning {
 			m.scanning = true
-			return m, cmdScan(m.inst)
+			return m, m.cmdScan()
 		}
+
+	case reposMsg:
+		m.repos[msg.src], m.repoErr[msg.src] = msg.repos, msg.err
 
 	case scanMsg:
 		m.scan, m.scanning = msg, false
 
 	case detailsMsg:
-		m.detailsTitle, m.details = msg.title, msg.lines
+		m.detailsTitle, m.detailsSrc, m.details = msg.title, msg.src, msg.lines
 
 	case validatedMsg:
 		pw := m.input.Value()
@@ -356,18 +656,18 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case runDoneMsg:
 		j := m.job
 		m.job = nil
-		if msg.err != nil {
+		cmds := m.afterJob(j)
+		switch {
+		case msg.err != nil:
 			m.setStatus(sErr, "%s %s failed: %v   (c: clear log)", icons.err, j.label, msg.err)
-		} else {
+		case j.next != nil:
+			// sudo cached the password on the first root step, so later
+			// steps in the chain run without asking again
+			cmds = append(cmds, m.start(j.next, ""))
+		case j.redetect:
+			m.setStatus(sOk, "✓ %s done — it's now on the Sources and Browse tabs   (c: clear log)", j.label)
+		default:
 			m.setStatus(sOk, "✓ %s done   (c: clear log)", j.label)
-		}
-		cmds := []tea.Cmd{cmdInstalled}
-		if m.scan != nil || m.tab == tabScan {
-			m.scan, m.scanning = nil, false // rescan once the installed list refreshes
-		}
-		if j.reload {
-			m.idxLoading = true
-			cmds = append(cmds, cmdIndex)
 		}
 		return m, tea.Batch(cmds...)
 
@@ -389,6 +689,22 @@ func (m model) update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
+// pkgOf returns the package an item acts on, and its source.
+func (m model) pkgOf(it *item) (*Source, *Pkg) {
+	switch {
+	case it == nil:
+		return nil, nil
+	case it.pkg != nil:
+		return m.src(it.pkg.Source), it.pkg
+	case it.inst != nil:
+		return m.src(it.inst.Source), &Pkg{Source: it.inst.Source, Name: it.inst.Name, Version: it.inst.Version,
+			Desc: it.inst.Summary, Section: it.inst.Origin}
+	case it.check != nil:
+		return m.src(it.check.Source), &Pkg{Source: it.check.Source, Name: it.check.Name}
+	}
+	return nil, nil
+}
+
 func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 	key := k.String()
 	if key == "ctrl+c" {
@@ -397,7 +713,7 @@ func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 
 	if m.details != nil {
 		if key == "o" {
-			m.openHomepage(m.detailsTitle)
+			m.openHomepage(m.detailsSrc, m.detailsTitle)
 		}
 		m.details = nil
 		return m, nil
@@ -416,6 +732,14 @@ func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 	move := func(to int) {
 		m.cursor[m.ctx()] = max(0, min(to, n-1))
 	}
+	src, pkg := m.pkgOf(sel)
+
+	// Sources-tab keys first; anything it doesn't handle falls through
+	if m.tab == tabSources {
+		if cmd, ok := m.sourcesKey(key, sel); ok {
+			return m, cmd
+		}
+	}
 
 	switch key {
 	case "q", "esc":
@@ -425,9 +749,11 @@ func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 	case "2":
 		return m, m.switchTab(tabScan)
 	case "3":
-		m.tab = tabApt
+		return m, m.switchTab(tabBrowse)
 	case "4":
-		m.tab = tabTheme
+		return m, m.switchTab(tabSources)
+	case "5":
+		return m, m.switchTab(tabTheme)
 	case "y":
 		if m.tab == tabTheme && sel != nil && sel.theme != "" {
 			return m, m.copyToCustom(sel.theme)
@@ -446,17 +772,30 @@ func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 		move(n - 1)
 	case "c":
 		m.output, m.status = nil, nil
+	case "[", "]":
+		dir := 1
+		if key == "[" {
+			dir = -1
+		}
+		switch m.tab {
+		case tabBrowse:
+			return m, m.setBrowse(cycle(m.activeIDs(), m.browse, dir))
+		case tabInstalled:
+			m.instFilter = cycle(append([]string{""}, m.activeIDs()...), m.instFilter, dir)
+		}
 	case "/":
-		m.tab = tabApt
-		return m, m.prompt("search", "Search apt: ")
+		m.tab = tabBrowse
+		return m, m.prompt("search", "Search "+m.browseSrc().Name+": ")
 	case "t", "-":
-		m.tab, m.aptView = tabApt, "sections"
+		if m.browseSrc().Sections {
+			m.tab, m.view = tabBrowse, "sections"
+		}
 	case "backspace":
-		if m.tab == tabApt {
-			if m.aptView == "packages" {
-				m.aptView = "sections"
+		if m.tab == tabBrowse && m.browseSrc().Sections {
+			if m.view == "packages" {
+				m.view = "sections"
 			} else if m.results != nil {
-				m.aptView = "packages"
+				m.view = "packages"
 			}
 		}
 	case "m":
@@ -465,36 +804,44 @@ func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 		}
 	case "a":
 		if m.tab == tabInstalled {
-			return m, m.prompt("add", "Install package: ")
+			return m, m.prompt("add", "Install from "+m.browseSrc().Name+" (exact name): ")
 		}
 	case "r":
 		switch m.tab {
 		case tabInstalled:
-			return m, cmdInstalled
+			var cmds []tea.Cmd
+			for _, s := range m.active() {
+				cmds = append(cmds, cmdInstalled(s))
+			}
+			return m, tea.Batch(cmds...)
 		case tabScan:
 			m.scanning = true
-			return m, cmdScan(m.inst)
-		case tabApt:
-			m.idxLoading = true
-			return m, cmdIndex
+			return m, m.cmdScan()
+		case tabBrowse:
+			s := m.browseSrc()
+			if s.Catalog {
+				m.loading[s.ID] = true
+				return m, cmdCatalog(s)
+			}
+			return m, m.search(m.query)
 		}
 	case "s":
 		if m.tab == tabScan {
 			m.scanning = true
-			return m, cmdScan(m.inst)
+			return m, m.cmdScan()
 		}
 	case "R":
 		if m.tab == tabScan {
-			j := &job{label: "apt update", args: []string{"apt-get", "update"}, reload: true}
-			return m, m.runRoot(j)
+			return m, m.runJob(&job{label: "apt update", args: []string{"apt-get", "update"}, root: true, reloadRepos: "apt"})
 		}
 	case "U":
 		if m.tab == tabScan {
-			return m, m.runRoot(aptJob("upgrade all", "upgrade"))
+			return m, m.runJob(m.upgradeAllJob())
 		}
 	case "A":
 		if m.tab == tabScan {
-			return m, m.runRoot(aptJob("autoremove", "autoremove"))
+			return m, m.runJob(&job{label: "autoremove", args: []string{"apt-get", "autoremove", "-y", "-o", "Dpkg::Progress-Fancy=0"},
+				root: true, reloadSource: "apt"})
 		}
 	case "enter":
 		if sel == nil {
@@ -507,35 +854,63 @@ func (m model) handleKey(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.openSection(sel.section)
 			return m, nil
 		}
-		return m, cmdDetails(sel.name)
+		if src != nil {
+			return m, cmdDetails(src, pkg)
+		}
 	case "o":
-		if sel != nil && sel.name != "" {
-			m.openHomepage(sel.name)
+		if pkg != nil {
+			m.openHomepage(pkg.Source, pkg.Name)
 		}
 	case "i":
-		if sel == nil || sel.name == "" || sel.section != "" {
+		if src == nil || m.tab == tabScan {
 			return m, nil
 		}
-		if m.instSet[sel.name] {
-			m.setStatus(sWarn, "lindeck: %s is already installed", sel.name)
+		if m.isInstalled(src.ID, pkg.Name) {
+			m.setStatus(sWarn, "lindeck: %s is already installed from %s", pkg.Name, src.Name)
 			return m, nil
 		}
-		return m, m.runRoot(aptJob("install "+sel.name, "install", "--", sel.name))
+		return m, m.runJob(src.pkgJob("install", src.install(src, pkg), pkg))
 	case "u":
-		if m.tab == tabScan && sel != nil {
-			return m, m.runRoot(aptJob("upgrade "+sel.name, "install", "--only-upgrade", "--", sel.name))
+		if m.tab == tabScan && src != nil {
+			if src.upgrade == nil {
+				m.setStatus(sWarn, "%s can't upgrade single packages", src.Name)
+				return m, nil
+			}
+			return m, m.runJob(src.pkgJob("upgrade", src.upgrade(src, pkg), pkg))
 		}
 	case "d":
-		if sel == nil || sel.name == "" || sel.section != "" {
+		if src == nil || m.tab == tabScan {
 			return m, nil
 		}
-		if !m.instSet[sel.name] {
-			m.setStatus(sWarn, "lindeck: %s is not installed", sel.name)
+		if !m.isInstalled(src.ID, pkg.Name) {
+			m.setStatus(sWarn, "lindeck: %s is not installed from %s", pkg.Name, src.Name)
 			return m, nil
 		}
-		return m, m.runRoot(aptJob("remove "+sel.name, "remove", "--", sel.name))
+		if src.remove == nil {
+			m.setStatus(sWarn, "%s has no remove command", src.Name)
+			return m, nil
+		}
+		return m, m.runJob(src.pkgJob("remove", src.remove(src, pkg), pkg))
 	}
 	return m, nil
+}
+
+// upgradeAllJob upgrades every active source, root steps first so the one
+// password prompt covers all of them.
+func (m model) upgradeAllJob() *job {
+	var roots, users []*job
+	for _, s := range m.active() {
+		if s.upgradeAll == nil {
+			continue
+		}
+		j := &job{label: "upgrade " + s.Name, args: s.upgradeAll(s), root: s.Root, reloadSource: s.ID}
+		if s.Root {
+			roots = append(roots, j)
+		} else {
+			users = append(users, j)
+		}
+	}
+	return chain(append(roots, users...)...)
 }
 
 func (m model) handleInput(k tea.KeyMsg) (tea.Model, tea.Cmd) {
@@ -545,31 +920,45 @@ func (m model) handleInput(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 			m.pending = nil
 			m.setStatus(sComment, "cancelled")
 		}
+		if m.inputKind == "form" {
+			m.form = nil
+			m.setStatus(sComment, "cancelled — no source added")
+		}
 		m.inputKind = ""
 		m.input.Reset()
 		m.input.Blur()
 		return m, nil
 	case "enter":
 		kind, val := m.inputKind, strings.TrimSpace(m.input.Value())
-		if kind == "password" {
+		switch kind {
+		case "password":
 			m.setStatus(sComment, "checking password …")
 			return m, cmdValidate(m.input.Value())
+		case "form":
+			return m, m.formNext(val)
 		}
 		m.inputKind = ""
 		m.input.Blur()
 		switch kind {
 		case "search":
-			if m.idx == nil {
-				m.pendingQ = &val
-			} else {
-				m.search(val)
-			}
+			return m, m.search(val)
 		case "add":
 			if val != "" {
-				return m, m.runRoot(aptJob("install "+val, "install", "--", val))
+				s := m.browseSrc()
+				p := &Pkg{Source: s.ID, Name: val}
+				return m, m.runJob(s.pkgJob("install", s.install(s, p), p))
 			}
 		case "color":
 			m.setColor(m.editSlot, val)
+		case "repo":
+			return m, m.addRepo(m.repoSrc, val)
+		case "confirm":
+			fn := m.onConfirm
+			m.onConfirm = nil
+			if v := strings.ToLower(val); (v == "y" || v == "yes") && fn != nil {
+				return m, fn(&m)
+			}
+			m.setStatus(sComment, "cancelled")
 		}
 		return m, nil
 	}
@@ -578,10 +967,17 @@ func (m model) handleInput(k tea.KeyMsg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
-func (m *model) openHomepage(name string) {
+func (m *model) openHomepage(srcID, name string) {
 	var p *Pkg
-	if m.idx != nil {
-		p = m.idx.byName[name]
+	if idx := m.catalogs[srcID]; idx != nil {
+		p = idx.byName[name]
+	}
+	if p == nil {
+		for _, r := range m.results {
+			if r.Source == srcID && r.Name == name {
+				p = r
+			}
+		}
 	}
 	if p == nil || p.Homepage == "" {
 		m.setStatus(sWarn, "lindeck: no homepage listed for %s", name)
@@ -599,7 +995,7 @@ func (m *model) openHomepage(name string) {
 // ---------------------------------------------------------------------------
 
 func (m model) tabLine() []seg {
-	tabs := []string{"1:Installed", "2:Scan", "3:apt", "4:Theme"}
+	tabs := []string{"1:Installed", "2:Scan", "3:Browse", "4:Sources", "5:Theme"}
 	var parts []string
 	for i, t := range tabs {
 		if tab(i) == m.tab {
@@ -608,32 +1004,63 @@ func (m model) tabLine() []seg {
 			parts = append(parts, " "+t+" ")
 		}
 	}
-	return []seg{{"  " + strings.Join(parts, " ") + "   source: apt", sTitle}}
+	return []seg{{"  " + strings.Join(parts, " "), sTitle}}
 }
 
 func (m model) footer() string {
 	switch m.tab {
 	case tabInstalled:
-		return "a:add  d:remove  m:manual/all  r:refresh  <CR>:details  o:homepage  1-4:tabs  q:quit"
+		return "[ ]:filter source  a:add  d:remove  m:dependencies  r:refresh  <CR>:details  o:homepage  1-5:tabs  q:quit"
 	case tabScan:
 		return "s:rescan  u:upgrade  U:upgrade all  A:autoremove  R:apt update  <CR>:details  q:quit"
+	case tabSources:
+		return "i:install manager  a:add repo  d:remove  e:enable/disable  n:new source  <CR>:browse  r:refresh  q:quit"
 	case tabTheme:
-		return "<CR>:apply theme / edit color  y:copy theme into custom  1-4:tabs  q:quit"
+		return "<CR>:apply theme / edit color  y:copy theme into custom  1-5:tabs  q:quit"
 	}
-	if m.aptView == "sections" {
-		return "<CR>:browse section  /:search  <BS>:back to packages  r:refresh  1-4:tabs  q:quit"
+	if m.view == "sections" {
+		return "[ ]:switch source  <CR>:browse section  /:search  <BS>:back to packages  r:refresh  q:quit"
 	}
-	return "t:sections  /:search  <CR>:details  i:install  d:remove  o:homepage  <BS>:sections  q:quit"
+	if m.browseSrc().Sections {
+		return "[ ]:switch source  t:sections  /:search  <CR>:details  i:install  d:remove  o:homepage  <BS>:sections  q:quit"
+	}
+	return "[ ]:switch source  /:search  <CR>:details  i:install  d:remove  o:homepage  r:refresh  1-5:tabs  q:quit"
+}
+
+// sourceBar shows the active sources with the current one highlighted.
+func (m model) sourceBar(label string, ids []string, cur string) []seg {
+	segs := []seg{{"  " + label + " ", sComment}}
+	for _, id := range ids {
+		name := id
+		if name == "" {
+			name = "all"
+		}
+		if id == cur {
+			segs = append(segs, seg{"[" + name + "]", sTitle}, seg{" ", sText})
+		} else {
+			segs = append(segs, seg{" " + name + " ", sText}, seg{" ", sText})
+		}
+	}
+	return append(segs, seg{"  [ ] switch", sComment})
 }
 
 // header returns the non-selectable rows above the items for the current view.
 func (m model) header() [][]seg {
-	line := func(s string, st lipgloss.Style) [][]seg { return [][]seg{{{s, st}}} }
+	line := func(s string, st lipgloss.Style) []seg { return []seg{{s, st}} }
 	switch m.tab {
 	case tabInstalled:
-		if m.inst == nil {
-			return line("  reading dpkg database …", sComment)
+		rows := [][]seg{m.sourceBar("source:", append([]string{""}, m.activeIDs()...), m.instFilter)}
+		if len(m.inst) == 0 {
+			rows = append(rows, line("  reading installed packages …", sComment))
 		}
+		for _, s := range m.active() {
+			if err := m.instErr[s.ID]; err != nil && (m.instFilter == "" || m.instFilter == s.ID) {
+				rows = append(rows, line(fmt.Sprintf("  %s: %v", s.Name, err), sErr))
+			}
+		}
+		return append(rows, []seg{})
+	case tabSources:
+		return m.sourcesHeader()
 	case tabTheme:
 		path, _ := configPath()
 		if home, err := os.UserHomeDir(); err == nil && strings.HasPrefix(path, home+"/") {
@@ -646,7 +1073,7 @@ func (m model) header() [][]seg {
 		}
 	case tabScan:
 		if m.scan == nil {
-			return line("  scanning packages …", sComment)
+			return [][]seg{line("  scanning packages …", sComment)}
 		}
 		c := map[string]int{}
 		for _, r := range m.scan {
@@ -656,28 +1083,33 @@ func (m model) header() [][]seg {
 			{"  ", sText}, {fmt.Sprintf("%d ok", c["ok"]), sOk},
 			{"   ", sText}, {fmt.Sprintf("%d warnings", c["warn"]), sWarn},
 			{"   ", sText}, {fmt.Sprintf("%d errors", c["err"]), sErr},
+			{"   across " + strings.Join(m.activeIDs(), ", "), sComment},
 		}, {}}
-	case tabApt:
-		if m.idxLoading {
-			return line("  loading apt index …", sComment)
-		}
-		if m.idxErr != nil {
-			return append(line("  error: "+m.idxErr.Error(), sErr),
-				line("  press r to retry", sComment)...)
-		}
-		if m.aptView == "sections" {
-			return [][]seg{{{fmt.Sprintf("  apt sections — %d  (press <CR> to browse one)", len(m.idx.sections)), sText}}, {}}
+	case tabBrowse:
+		s := m.browseSrc()
+		rows := [][]seg{m.sourceBar("source:", m.activeIDs(), m.browse)}
+		switch {
+		case m.loading[s.ID] && s.Catalog:
+			return append(rows, line("  loading "+s.Name+" catalog …", sComment))
+		case m.loading[s.ID]:
+			return append(rows, line("  searching "+s.Name+" for '"+m.query+"' …", sComment))
+		case m.loadErr[s.ID] != nil:
+			return append(rows, line("  error: "+m.loadErr[s.ID].Error(), sErr), line("  press r to retry", sComment))
+		case m.view == "sections" && m.catalogs[s.ID] != nil:
+			return append(rows, line(fmt.Sprintf("  %s sections — %d  (press <CR> to browse one)", s.Name, len(m.catalogs[s.ID].sections)), sText), nil)
+		case !s.Catalog && m.query == "":
+			return append(rows, line("  press / to search "+s.Name, sText), line("  "+s.SearchHint, sComment))
 		}
 		title := "results for '" + m.query + "'"
-		if s, ok := strings.CutPrefix(m.query, "section:"); ok {
-			title = "section '" + s + "'"
+		if sec, ok := strings.CutPrefix(m.query, "section:"); ok {
+			title = "section '" + sec + "'"
 		} else if m.query == "" {
-			title = "all packages"
+			title = "all " + s.Name + " packages"
 		}
-		return [][]seg{{
+		return append(rows, []seg{
 			{fmt.Sprintf("  %s — %d packages   ", title, len(m.results)), sText},
 			{"✓", sOk}, {" = already installed", sText},
-		}, {}}
+		}, nil)
 	}
 	return nil
 }
@@ -686,16 +1118,24 @@ func (m model) items() []item {
 	var items []item
 	switch m.tab {
 	case tabInstalled:
-		for i := range m.inst {
-			in := &m.inst[i]
-			if m.showAll || in.Manual || in.State != "" {
-				items = append(items, item{name: in.Name, inst: in})
+		for _, s := range m.active() {
+			if m.instFilter != "" && m.instFilter != s.ID {
+				continue
+			}
+			list := m.inst[s.ID]
+			for i := range list {
+				in := &list[i]
+				if m.showAll || in.Manual || in.State != "" {
+					items = append(items, item{name: in.Name, inst: in})
+				}
 			}
 		}
 	case tabScan:
 		for i := range m.scan {
 			items = append(items, item{name: m.scan[i].Name, check: &m.scan[i]})
 		}
+	case tabSources:
+		items = m.sourceItems()
 	case tabTheme:
 		for _, p := range presets {
 			items = append(items, item{theme: p.Name})
@@ -704,12 +1144,13 @@ func (m model) items() []item {
 		for i := range slots {
 			items = append(items, item{isSlot: true, slot: i})
 		}
-	case tabApt:
-		if m.idx == nil || m.idxLoading {
+	case tabBrowse:
+		idx := m.catalogs[m.browse]
+		if m.loading[m.browse] && m.browseSrc().Catalog {
 			break
 		}
-		if m.aptView == "sections" {
-			for _, s := range m.idx.sections {
+		if m.view == "sections" && idx != nil {
+			for _, s := range idx.sections {
 				items = append(items, item{section: s.Name})
 			}
 			break
@@ -726,9 +1167,13 @@ func rowCount(it item) int {
 	switch {
 	case it.theme == customName:
 		return 3 // blank line, the custom row, its explanation
+	case it.addNew:
+		return 2
+	case it.src != nil && it.repo == nil:
+		return 2 // blank line, then the source
 	case it.check != nil:
 		return max(len(it.check.Notes), 1)
-	case it.pkg != nil:
+	case it.pkg != nil && it.pkg.Desc != "":
 		return 2
 	}
 	return 1
@@ -740,25 +1185,27 @@ func (m model) rows(it item) [][]seg {
 		return m.themeRows(it.theme)
 	case it.isSlot:
 		return m.slotRows(it.slot)
+	case it.src != nil || it.addNew:
+		return m.sourceRows(it)
 	case it.inst != nil:
 		in := it.inst
-		icon, status, nameSt := icons.auto, "auto", sText
+		icon, nameSt := icons.auto, sText
 		if in.Manual {
-			icon, status = icons.manual, "manual"
+			icon = icons.manual
 		}
-		nw, vw, showSummary := m.columns(13, 38, 24) // icon, status and spacing
+		nw, vw, showSummary := m.columns(14, 38, 24) // icon, source column and spacing
 		summary := ""
 		if showSummary {
 			summary = in.Summary
 		}
-		ist := sDir
+		ist, srcLabel := sDir, in.Source
 		if in.State != "" {
-			icon, ist, status, nameSt = icons.err, sErr, "ERROR", sErr
+			icon, ist, nameSt, srcLabel = icons.err, sErr, sErr, "ERROR"
 		}
 		return [][]seg{{
 			{"  ", sText}, {icon, ist},
 			{fmt.Sprintf(" %-*s ", nw, trunc(in.Name, nw)), nameSt},
-			{fmt.Sprintf("%-7s ", status), nameSt},
+			{fmt.Sprintf("%-8s", trunc(srcLabel, 7)), sDir},
 			{fmt.Sprintf("%-*s ", vw, trunc(in.Version, vw)), sComment},
 			{summary, sComment},
 		}}
@@ -776,8 +1223,9 @@ func (m model) rows(it item) [][]seg {
 		if len(r.Notes) > 0 {
 			note = r.Notes[0]
 		}
-		nw := max(14, min(38, (m.innerWidth()-6)*45/100))
-		rows := [][]seg{{{"  ", sText}, {icon, st}, {fmt.Sprintf(" %-*s ", nw, trunc(r.Name, nw)), sText}, {note, sText}}}
+		nw := max(14, min(38, (m.innerWidth()-14)*45/100))
+		rows := [][]seg{{{"  ", sText}, {icon, st}, {fmt.Sprintf(" %-*s ", nw, trunc(r.Name, nw)), sText},
+			{fmt.Sprintf("%-8s", trunc(r.Source, 7)), sDir}, {note, sText}}}
 		for _, n := range r.Notes[min(1, len(r.Notes)):] {
 			rows = append(rows, []seg{{"      · " + n, sComment}})
 		}
@@ -785,7 +1233,7 @@ func (m model) rows(it item) [][]seg {
 
 	case it.section != "":
 		count := 0
-		for _, s := range m.idx.sections {
+		for _, s := range m.catalogs[m.browse].sections {
 			if s.Name == it.section {
 				count = s.Count
 			}
@@ -803,14 +1251,17 @@ func (m model) rows(it item) [][]seg {
 			section = p.Section
 		}
 		mark, mst := " ", sText
-		if m.instSet[p.Name] {
+		if m.isInstalled(p.Source, p.Name) {
 			mark, mst = "✓", sOk
 		}
-		return [][]seg{
+		rows := [][]seg{
 			{{"  ", sText}, {mark, mst}, {fmt.Sprintf(" %-*s ", nw, trunc(p.Name, nw)), sText},
 				{fmt.Sprintf("%-*s ", vw, trunc(p.Version, vw)), sComment}, {section, sDir}},
-			{{"        " + p.Desc, sComment}},
 		}
+		if p.Desc != "" {
+			rows = append(rows, []seg{{"        " + p.Desc, sComment}})
+		}
+		return rows
 	}
 	return nil
 }
@@ -843,13 +1294,10 @@ func (m model) hintLines() [][]seg {
 		if used > 0 && used+2+n > width {
 			lines, cur, used = append(lines, cur), nil, 0
 		}
-		if used == 0 {
-			cur = append(cur, seg{"  ", sHint})
-		} else {
-			cur = append(cur, seg{"  ", sHint})
+		if used > 0 {
 			used += 2
 		}
-		cur = append(cur, seg{key, sHintKey}, seg{":" + label, sHint})
+		cur = append(cur, seg{"  ", sHint}, seg{key, sHintKey}, seg{":" + label, sHint})
 		used += n
 	}
 	return append(lines, cur)
@@ -899,12 +1347,12 @@ func renderRow(segs []seg, w int, selected bool) string {
 			st = st.Background(selBg)
 		}
 		last = st
-		t := []rune(s.t)
-		if len(t) > left {
-			t = append(t[:max(left-1, 0)], '…')
+		t := s.t
+		if runewidth.StringWidth(t) > left {
+			t = runewidth.Truncate(t, left, "…")
 		}
-		b.WriteString(st.Render(string(t)))
-		left -= len(t)
+		b.WriteString(st.Render(t))
+		left -= runewidth.StringWidth(t)
 	}
 	if left > 0 {
 		pad := lipgloss.NewStyle()
@@ -933,7 +1381,7 @@ func (m model) View() string {
 
 	bh := m.bodyHeight()
 	if m.details != nil {
-		body := [][]seg{{{"  " + m.detailsTitle, sTitle}}, {}}
+		body := [][]seg{{{"  " + m.detailsTitle, sTitle}, {"  (" + m.detailsSrc + ")", sComment}}, {}}
 		for _, l := range m.details {
 			body = append(body, []seg{{"  " + l, sText}})
 		}
@@ -1027,11 +1475,12 @@ func (m model) renderBody(add func([]seg, bool), bh int) {
 	for ; i < len(items) && len(out) < bh; i++ {
 		for j, r := range m.rows(items[i]) {
 			if starts[i]+j >= off && len(out) < bh {
-				out, sel = append(out, r), append(sel, i == cur)
+				// the selection highlight skips spacer rows
+				out, sel = append(out, r), append(sel, i == cur && len(r) > 0)
 			}
 		}
 	}
-	if len(items) == 0 && m.tab == tabInstalled && m.inst != nil && len(out) < bh {
+	if len(items) == 0 && m.tab == tabInstalled && len(m.inst) > 0 && len(out) < bh {
 		out, sel = append(out, []seg{{"  (no packages to show — press m to include dependencies)", sComment}}), append(sel, false)
 	}
 	for r := 0; r < bh; r++ {
@@ -1043,105 +1492,8 @@ func (m model) renderBody(add func([]seg, bool), bh int) {
 	}
 }
 
+// trunc shortens s to at most n terminal cells, counting wide characters
+// such as emoji as two.
 func trunc(s string, n int) string {
-	r := []rune(s)
-	if len(r) <= n {
-		return s
-	}
-	return string(r[:max(n-1, 0)]) + "…"
-}
-
-// ---------------------------------------------------------------------------
-// Theme tab
-// ---------------------------------------------------------------------------
-
-// swatches renders a theme's palette as a row of colored blocks.
-func swatches(t Theme) []seg {
-	var out []seg
-	for _, s := range slots {
-		out = append(out, seg{"██", lipgloss.NewStyle().Foreground(lipgloss.Color(*s.get(&t)))}, seg{" ", sText})
-	}
-	return out
-}
-
-func (m model) themeRows(name string) [][]seg {
-	mark, mst := "  ", sText
-	if m.cfg.Theme == name {
-		mark, mst = "✓ ", sOk
-	}
-	if name == customName {
-		t := m.customTheme()
-		row := append([]seg{{"  ", sText}, {mark, mst}, {fmt.Sprintf("%-20s", name), sText}}, swatches(t)...)
-		return [][]seg{{}, row, {{"      your own colors — <CR> on a color below to change it, or y on a theme to start from it", sComment}}}
-	}
-	t, _ := preset(name)
-	return [][]seg{append([]seg{{"  ", sText}, {mark, mst}, {fmt.Sprintf("%-20s", name), sText}}, swatches(t)...)}
-}
-
-func (m model) slotRows(i int) [][]seg {
-	t := m.customTheme()
-	v := *slots[i].get(&t)
-	return [][]seg{{
-		{fmt.Sprintf("      %-12s", slots[i].name), sText},
-		{"████ ", lipgloss.NewStyle().Foreground(lipgloss.Color(v))},
-		{v, sComment},
-	}}
-}
-
-// customTheme is the custom palette. Until one is saved it starts as a copy
-// of the theme in use, so editing a color tweaks what you're looking at.
-func (m model) customTheme() Theme {
-	if m.cfg.Custom == nil {
-		return m.cfg.resolve()
-	}
-	return Config{Theme: customName, Custom: m.cfg.Custom}.resolve()
-}
-
-func (m *model) save(msg string) {
-	if err := saveConfig(m.cfg); err != nil {
-		m.setStatus(sErr, "could not save theme: %v", err)
-		return
-	}
-	m.setStatus(sOk, "✓ %s", msg)
-}
-
-func (m *model) themeEnter(it item) tea.Cmd {
-	switch {
-	case it.isSlot:
-		m.editSlot = it.slot
-		t := m.customTheme()
-		cmd := m.prompt("color", slots[it.slot].name+" color (#rrggbb): ")
-		m.input.SetValue(*slots[it.slot].get(&t))
-		m.input.CursorEnd()
-		return cmd
-	case it.theme != "":
-		m.cfg.Theme = it.theme
-		m.save("theme set to " + it.theme)
-	}
-	return nil
-}
-
-// copyToCustom seeds the custom palette from a theme so it can be tweaked.
-func (m *model) copyToCustom(name string) tea.Cmd {
-	t, ok := preset(name)
-	if !ok {
-		t = m.customTheme()
-	}
-	m.cfg.Custom = &t
-	m.cfg.Theme = customName
-	m.save("copied " + name + " into custom — edit its colors below")
-	return nil
-}
-
-func (m *model) setColor(i int, val string) {
-	hex, ok := normalizeHex(val)
-	if !ok {
-		m.setStatus(sErr, "%q isn't a hex color — use #rrggbb, like #b4befe", val)
-		return
-	}
-	t := m.customTheme()
-	*slots[i].get(&t) = hex
-	m.cfg.Custom = &t
-	m.cfg.Theme = customName
-	m.save(fmt.Sprintf("%s set to %s (theme: custom)", slots[i].name, hex))
+	return runewidth.Truncate(s, n, "…")
 }

@@ -11,126 +11,130 @@
 <line x1="24.2" y1="74.0" x2="24.2" y2="92.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <text x="53.6" y="87.0" fill="#e69875" font-weight="bold" textLength="92.4" lengthAdjust="spacingAndGlyphs">1:Installed</text>
 <text x="171.2" y="87.0" fill="#e69875" font-weight="bold" textLength="50.4" lengthAdjust="spacingAndGlyphs">2:Scan</text>
-<text x="238.4" y="87.0" fill="#e69875" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">[3:apt]</text>
-<text x="314.0" y="87.0" fill="#e69875" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">4:Theme</text>
-<text x="406.4" y="87.0" fill="#e69875" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">source:</text>
-<text x="473.6" y="87.0" fill="#e69875" font-weight="bold" textLength="25.2" lengthAdjust="spacingAndGlyphs">apt</text>
+<text x="238.4" y="87.0" fill="#e69875" font-weight="bold" textLength="84.0" lengthAdjust="spacingAndGlyphs">[3:Browse]</text>
+<text x="339.2" y="87.0" fill="#e69875" font-weight="bold" textLength="75.6" lengthAdjust="spacingAndGlyphs">4:Sources</text>
+<text x="440.0" y="87.0" fill="#e69875" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">5:Theme</text>
 <line x1="839.0" y1="74.0" x2="839.0" y2="92.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="92.0" x2="24.2" y2="110.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="45.2" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">t</text>
-<text x="53.6" y="105.0" fill="#e69875" textLength="75.6" lengthAdjust="spacingAndGlyphs">:sections</text>
-<text x="146.0" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">/</text>
-<text x="154.4" y="105.0" fill="#e69875" textLength="58.8" lengthAdjust="spacingAndGlyphs">:search</text>
-<text x="230.0" y="105.0" fill="#e69875" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">&lt;CR&gt;</text>
-<text x="263.6" y="105.0" fill="#e69875" textLength="67.2" lengthAdjust="spacingAndGlyphs">:details</text>
-<text x="347.6" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">i</text>
-<text x="356.0" y="105.0" fill="#e69875" textLength="67.2" lengthAdjust="spacingAndGlyphs">:install</text>
-<text x="440.0" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">d</text>
-<text x="448.4" y="105.0" fill="#e69875" textLength="58.8" lengthAdjust="spacingAndGlyphs">:remove</text>
-<text x="524.0" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">o</text>
-<text x="532.4" y="105.0" fill="#e69875" textLength="75.6" lengthAdjust="spacingAndGlyphs">:homepage</text>
-<text x="624.8" y="105.0" fill="#e69875" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">&lt;BS&gt;</text>
-<text x="658.4" y="105.0" fill="#e69875" textLength="75.6" lengthAdjust="spacingAndGlyphs">:sections</text>
-<text x="750.8" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">q</text>
-<text x="759.2" y="105.0" fill="#e69875" textLength="42.0" lengthAdjust="spacingAndGlyphs">:quit</text>
+<text x="45.2" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">[</text>
+<text x="62.0" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">]</text>
+<text x="70.4" y="105.0" fill="#e69875" textLength="58.8" lengthAdjust="spacingAndGlyphs">:switch</text>
+<text x="137.6" y="105.0" fill="#e69875" textLength="50.4" lengthAdjust="spacingAndGlyphs">source</text>
+<text x="204.8" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">t</text>
+<text x="213.2" y="105.0" fill="#e69875" textLength="75.6" lengthAdjust="spacingAndGlyphs">:sections</text>
+<text x="305.6" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">/</text>
+<text x="314.0" y="105.0" fill="#e69875" textLength="58.8" lengthAdjust="spacingAndGlyphs">:search</text>
+<text x="389.6" y="105.0" fill="#e69875" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">&lt;CR&gt;</text>
+<text x="423.2" y="105.0" fill="#e69875" textLength="67.2" lengthAdjust="spacingAndGlyphs">:details</text>
+<text x="507.2" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">i</text>
+<text x="515.6" y="105.0" fill="#e69875" textLength="67.2" lengthAdjust="spacingAndGlyphs">:install</text>
+<text x="599.6" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">d</text>
+<text x="608.0" y="105.0" fill="#e69875" textLength="58.8" lengthAdjust="spacingAndGlyphs">:remove</text>
+<text x="683.6" y="105.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">o</text>
+<text x="692.0" y="105.0" fill="#e69875" textLength="75.6" lengthAdjust="spacingAndGlyphs">:homepage</text>
 <line x1="839.0" y1="92.0" x2="839.0" y2="110.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="110.0" x2="24.2" y2="128.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<line x1="28.4" y1="119.0" x2="834.8" y2="119.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="123.0" fill="#e69875" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">&lt;BS&gt;</text>
+<text x="78.8" y="123.0" fill="#e69875" textLength="75.6" lengthAdjust="spacingAndGlyphs">:sections</text>
+<text x="171.2" y="123.0" fill="#e69875" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">q</text>
+<text x="179.6" y="123.0" fill="#e69875" textLength="42.0" lengthAdjust="spacingAndGlyphs">:quit</text>
 <line x1="839.0" y1="110.0" x2="839.0" y2="128.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="128.0" x2="24.2" y2="146.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="45.2" y="141.0" fill="#d3c6aa" textLength="58.8" lengthAdjust="spacingAndGlyphs">results</text>
-<text x="112.4" y="141.0" fill="#d3c6aa" textLength="25.2" lengthAdjust="spacingAndGlyphs">for</text>
-<text x="146.0" y="141.0" fill="#d3c6aa" textLength="42.0" lengthAdjust="spacingAndGlyphs">&#x27;git&#x27;</text>
-<text x="196.4" y="141.0" fill="#d3c6aa" textLength="8.4" lengthAdjust="spacingAndGlyphs">—</text>
-<text x="213.2" y="141.0" fill="#d3c6aa" textLength="33.6" lengthAdjust="spacingAndGlyphs">2445</text>
-<text x="255.2" y="141.0" fill="#d3c6aa" textLength="67.2" lengthAdjust="spacingAndGlyphs">packages</text>
-<text x="347.6" y="141.0" fill="#a7c080" textLength="8.4" lengthAdjust="spacingAndGlyphs">✓</text>
-<text x="364.4" y="141.0" fill="#d3c6aa" textLength="8.4" lengthAdjust="spacingAndGlyphs">=</text>
-<text x="381.2" y="141.0" fill="#d3c6aa" textLength="58.8" lengthAdjust="spacingAndGlyphs">already</text>
-<text x="448.4" y="141.0" fill="#d3c6aa" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<line x1="28.4" y1="137.0" x2="834.8" y2="137.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="839.0" y1="128.0" x2="839.0" y2="146.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="146.0" x2="24.2" y2="164.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="159.0" fill="#859289" textLength="58.8" lengthAdjust="spacingAndGlyphs">source:</text>
+<text x="112.4" y="159.0" fill="#e69875" font-weight="bold" textLength="42.0" lengthAdjust="spacingAndGlyphs">[apt]</text>
+<text x="171.2" y="159.0" fill="#d3c6aa" textLength="33.6" lengthAdjust="spacingAndGlyphs">snap</text>
+<text x="230.0" y="159.0" fill="#d3c6aa" textLength="33.6" lengthAdjust="spacingAndGlyphs">pipx</text>
+<text x="288.8" y="159.0" fill="#d3c6aa" textLength="42.0" lengthAdjust="spacingAndGlyphs">cargo</text>
+<text x="356.0" y="159.0" fill="#d3c6aa" textLength="25.2" lengthAdjust="spacingAndGlyphs">npm</text>
+<text x="414.8" y="159.0" fill="#859289" textLength="8.4" lengthAdjust="spacingAndGlyphs">[</text>
+<text x="431.6" y="159.0" fill="#859289" textLength="8.4" lengthAdjust="spacingAndGlyphs">]</text>
+<text x="448.4" y="159.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">switch</text>
 <line x1="839.0" y1="146.0" x2="839.0" y2="164.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="164.0" x2="24.2" y2="182.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="45.2" y="177.0" fill="#a7c080" textLength="8.4" lengthAdjust="spacingAndGlyphs">✓</text>
-<text x="62.0" y="177.0" fill="#d3c6aa" textLength="25.2" lengthAdjust="spacingAndGlyphs">git</text>
-<text x="448.4" y="177.0" fill="#859289" textLength="159.6" lengthAdjust="spacingAndGlyphs">1:2.43.0-1ubuntu7.4</text>
-<text x="658.4" y="177.0" fill="#83c092" textLength="25.2" lengthAdjust="spacingAndGlyphs">vcs</text>
+<text x="45.2" y="177.0" fill="#d3c6aa" textLength="58.8" lengthAdjust="spacingAndGlyphs">results</text>
+<text x="112.4" y="177.0" fill="#d3c6aa" textLength="25.2" lengthAdjust="spacingAndGlyphs">for</text>
+<text x="146.0" y="177.0" fill="#d3c6aa" textLength="42.0" lengthAdjust="spacingAndGlyphs">&#x27;git&#x27;</text>
+<text x="196.4" y="177.0" fill="#d3c6aa" textLength="8.4" lengthAdjust="spacingAndGlyphs">—</text>
+<text x="213.2" y="177.0" fill="#d3c6aa" textLength="33.6" lengthAdjust="spacingAndGlyphs">2445</text>
+<text x="255.2" y="177.0" fill="#d3c6aa" textLength="67.2" lengthAdjust="spacingAndGlyphs">packages</text>
+<text x="347.6" y="177.0" fill="#a7c080" textLength="8.4" lengthAdjust="spacingAndGlyphs">✓</text>
+<text x="364.4" y="177.0" fill="#d3c6aa" textLength="8.4" lengthAdjust="spacingAndGlyphs">=</text>
+<text x="381.2" y="177.0" fill="#d3c6aa" textLength="58.8" lengthAdjust="spacingAndGlyphs">already</text>
+<text x="448.4" y="177.0" fill="#d3c6aa" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
 <line x1="839.0" y1="164.0" x2="839.0" y2="182.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="182.0" x2="24.2" y2="200.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="95.6" y="195.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">fast,</text>
-<text x="146.0" y="195.0" fill="#859289" textLength="75.6" lengthAdjust="spacingAndGlyphs">scalable,</text>
-<text x="230.0" y="195.0" fill="#859289" textLength="92.4" lengthAdjust="spacingAndGlyphs">distributed</text>
-<text x="330.8" y="195.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">revision</text>
-<text x="406.4" y="195.0" fill="#859289" textLength="58.8" lengthAdjust="spacingAndGlyphs">control</text>
-<text x="473.6" y="195.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">system</text>
 <line x1="839.0" y1="182.0" x2="839.0" y2="200.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="200.0" x2="24.2" y2="218.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<rect x="28.4" y="200.0" width="420.0" height="18" fill="#3c484d"/>
-<text x="62.0" y="213.0" fill="#d3c6aa" textLength="84.0" lengthAdjust="spacingAndGlyphs">git-absorb</text>
-<rect x="448.4" y="200.0" width="210.0" height="18" fill="#3c484d"/>
-<text x="448.4" y="213.0" fill="#859289" textLength="117.6" lengthAdjust="spacingAndGlyphs">0.6.11-1build1</text>
-<rect x="658.4" y="200.0" width="25.2" height="18" fill="#3c484d"/>
+<text x="45.2" y="213.0" fill="#a7c080" textLength="8.4" lengthAdjust="spacingAndGlyphs">✓</text>
+<text x="62.0" y="213.0" fill="#d3c6aa" textLength="25.2" lengthAdjust="spacingAndGlyphs">git</text>
+<text x="448.4" y="213.0" fill="#859289" textLength="159.6" lengthAdjust="spacingAndGlyphs">1:2.43.0-1ubuntu7.4</text>
 <text x="658.4" y="213.0" fill="#83c092" textLength="25.2" lengthAdjust="spacingAndGlyphs">vcs</text>
-<rect x="683.6" y="200.0" width="151.2" height="18" fill="#3c484d"/>
 <line x1="839.0" y1="200.0" x2="839.0" y2="218.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="218.0" x2="24.2" y2="236.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<rect x="28.4" y="218.0" width="344.4" height="18" fill="#3c484d"/>
-<text x="95.6" y="231.0" fill="#859289" textLength="25.2" lengthAdjust="spacingAndGlyphs">Git</text>
-<text x="129.2" y="231.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">commit</text>
-<text x="188.0" y="231.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">--fixup,</text>
-<text x="263.6" y="231.0" fill="#859289" textLength="25.2" lengthAdjust="spacingAndGlyphs">but</text>
-<text x="297.2" y="231.0" fill="#859289" textLength="75.6" lengthAdjust="spacingAndGlyphs">automatic</text>
-<rect x="372.8" y="218.0" width="462.0" height="18" fill="#3c484d"/>
+<text x="95.6" y="231.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">fast,</text>
+<text x="146.0" y="231.0" fill="#859289" textLength="75.6" lengthAdjust="spacingAndGlyphs">scalable,</text>
+<text x="230.0" y="231.0" fill="#859289" textLength="92.4" lengthAdjust="spacingAndGlyphs">distributed</text>
+<text x="330.8" y="231.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">revision</text>
+<text x="406.4" y="231.0" fill="#859289" textLength="58.8" lengthAdjust="spacingAndGlyphs">control</text>
+<text x="473.6" y="231.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">system</text>
 <line x1="839.0" y1="218.0" x2="839.0" y2="236.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="236.0" x2="24.2" y2="254.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="62.0" y="249.0" fill="#d3c6aa" textLength="58.8" lengthAdjust="spacingAndGlyphs">git-all</text>
-<text x="448.4" y="249.0" fill="#859289" textLength="159.6" lengthAdjust="spacingAndGlyphs">1:2.43.0-1ubuntu7.4</text>
+<rect x="28.4" y="236.0" width="420.0" height="18" fill="#3c484d"/>
+<text x="62.0" y="249.0" fill="#d3c6aa" textLength="84.0" lengthAdjust="spacingAndGlyphs">git-absorb</text>
+<rect x="448.4" y="236.0" width="210.0" height="18" fill="#3c484d"/>
+<text x="448.4" y="249.0" fill="#859289" textLength="117.6" lengthAdjust="spacingAndGlyphs">0.6.11-1build1</text>
+<rect x="658.4" y="236.0" width="25.2" height="18" fill="#3c484d"/>
 <text x="658.4" y="249.0" fill="#83c092" textLength="25.2" lengthAdjust="spacingAndGlyphs">vcs</text>
+<rect x="683.6" y="236.0" width="151.2" height="18" fill="#3c484d"/>
 <line x1="839.0" y1="236.0" x2="839.0" y2="254.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="254.0" x2="24.2" y2="272.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="95.6" y="267.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">fast,</text>
-<text x="146.0" y="267.0" fill="#859289" textLength="75.6" lengthAdjust="spacingAndGlyphs">scalable,</text>
-<text x="230.0" y="267.0" fill="#859289" textLength="92.4" lengthAdjust="spacingAndGlyphs">distributed</text>
-<text x="330.8" y="267.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">revision</text>
-<text x="406.4" y="267.0" fill="#859289" textLength="58.8" lengthAdjust="spacingAndGlyphs">control</text>
-<text x="473.6" y="267.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">system</text>
-<text x="532.4" y="267.0" fill="#859289" textLength="33.6" lengthAdjust="spacingAndGlyphs">(all</text>
-<text x="574.4" y="267.0" fill="#859289" textLength="100.8" lengthAdjust="spacingAndGlyphs">subpackages)</text>
+<rect x="28.4" y="254.0" width="344.4" height="18" fill="#3c484d"/>
+<text x="95.6" y="267.0" fill="#859289" textLength="25.2" lengthAdjust="spacingAndGlyphs">Git</text>
+<text x="129.2" y="267.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">commit</text>
+<text x="188.0" y="267.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">--fixup,</text>
+<text x="263.6" y="267.0" fill="#859289" textLength="25.2" lengthAdjust="spacingAndGlyphs">but</text>
+<text x="297.2" y="267.0" fill="#859289" textLength="75.6" lengthAdjust="spacingAndGlyphs">automatic</text>
+<rect x="372.8" y="254.0" width="462.0" height="18" fill="#3c484d"/>
 <line x1="839.0" y1="254.0" x2="839.0" y2="272.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="272.0" x2="24.2" y2="290.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="62.0" y="285.0" fill="#d3c6aa" textLength="75.6" lengthAdjust="spacingAndGlyphs">git-annex</text>
-<text x="448.4" y="285.0" fill="#859289" textLength="159.6" lengthAdjust="spacingAndGlyphs">10.20240129-1build1</text>
-<text x="658.4" y="285.0" fill="#83c092" textLength="42.0" lengthAdjust="spacingAndGlyphs">utils</text>
+<text x="62.0" y="285.0" fill="#d3c6aa" textLength="58.8" lengthAdjust="spacingAndGlyphs">git-all</text>
+<text x="448.4" y="285.0" fill="#859289" textLength="159.6" lengthAdjust="spacingAndGlyphs">1:2.43.0-1ubuntu7.4</text>
+<text x="658.4" y="285.0" fill="#83c092" textLength="25.2" lengthAdjust="spacingAndGlyphs">vcs</text>
 <line x1="839.0" y1="272.0" x2="839.0" y2="290.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="290.0" x2="24.2" y2="308.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="95.6" y="303.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">manage</text>
-<text x="154.4" y="303.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">files</text>
-<text x="204.8" y="303.0" fill="#859289" textLength="33.6" lengthAdjust="spacingAndGlyphs">with</text>
-<text x="246.8" y="303.0" fill="#859289" textLength="33.6" lengthAdjust="spacingAndGlyphs">git,</text>
-<text x="288.8" y="303.0" fill="#859289" textLength="58.8" lengthAdjust="spacingAndGlyphs">without</text>
-<text x="356.0" y="303.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">checking</text>
-<text x="431.6" y="303.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">their</text>
-<text x="482.0" y="303.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">contents</text>
-<text x="557.6" y="303.0" fill="#859289" textLength="33.6" lengthAdjust="spacingAndGlyphs">into</text>
-<text x="599.6" y="303.0" fill="#859289" textLength="25.2" lengthAdjust="spacingAndGlyphs">git</text>
+<text x="95.6" y="303.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">fast,</text>
+<text x="146.0" y="303.0" fill="#859289" textLength="75.6" lengthAdjust="spacingAndGlyphs">scalable,</text>
+<text x="230.0" y="303.0" fill="#859289" textLength="92.4" lengthAdjust="spacingAndGlyphs">distributed</text>
+<text x="330.8" y="303.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">revision</text>
+<text x="406.4" y="303.0" fill="#859289" textLength="58.8" lengthAdjust="spacingAndGlyphs">control</text>
+<text x="473.6" y="303.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">system</text>
+<text x="532.4" y="303.0" fill="#859289" textLength="33.6" lengthAdjust="spacingAndGlyphs">(all</text>
+<text x="574.4" y="303.0" fill="#859289" textLength="100.8" lengthAdjust="spacingAndGlyphs">subpackages)</text>
 <line x1="839.0" y1="290.0" x2="839.0" y2="308.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="308.0" x2="24.2" y2="326.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="62.0" y="321.0" fill="#d3c6aa" textLength="193.2" lengthAdjust="spacingAndGlyphs">git-annex-remote-rclone</text>
-<text x="448.4" y="321.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">0.8-1</text>
+<text x="62.0" y="321.0" fill="#d3c6aa" textLength="75.6" lengthAdjust="spacingAndGlyphs">git-annex</text>
+<text x="448.4" y="321.0" fill="#859289" textLength="159.6" lengthAdjust="spacingAndGlyphs">10.20240129-1build1</text>
 <text x="658.4" y="321.0" fill="#83c092" textLength="42.0" lengthAdjust="spacingAndGlyphs">utils</text>
 <line x1="839.0" y1="308.0" x2="839.0" y2="326.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="326.0" x2="24.2" y2="344.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="95.6" y="339.0" fill="#859289" textLength="100.8" lengthAdjust="spacingAndGlyphs">rclone-based</text>
-<text x="204.8" y="339.0" fill="#859289" textLength="25.2" lengthAdjust="spacingAndGlyphs">git</text>
-<text x="238.4" y="339.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">annex</text>
-<text x="288.8" y="339.0" fill="#859289" textLength="58.8" lengthAdjust="spacingAndGlyphs">special</text>
-<text x="356.0" y="339.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">remote</text>
+<text x="95.6" y="339.0" fill="#859289" textLength="50.4" lengthAdjust="spacingAndGlyphs">manage</text>
+<text x="154.4" y="339.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">files</text>
+<text x="204.8" y="339.0" fill="#859289" textLength="33.6" lengthAdjust="spacingAndGlyphs">with</text>
+<text x="246.8" y="339.0" fill="#859289" textLength="33.6" lengthAdjust="spacingAndGlyphs">git,</text>
+<text x="288.8" y="339.0" fill="#859289" textLength="58.8" lengthAdjust="spacingAndGlyphs">without</text>
+<text x="356.0" y="339.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">checking</text>
+<text x="431.6" y="339.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">their</text>
+<text x="482.0" y="339.0" fill="#859289" textLength="67.2" lengthAdjust="spacingAndGlyphs">contents</text>
+<text x="557.6" y="339.0" fill="#859289" textLength="33.6" lengthAdjust="spacingAndGlyphs">into</text>
+<text x="599.6" y="339.0" fill="#859289" textLength="25.2" lengthAdjust="spacingAndGlyphs">git</text>
 <line x1="839.0" y1="326.0" x2="839.0" y2="344.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="344.0" x2="24.2" y2="362.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
-<text x="62.0" y="357.0" fill="#d3c6aa" textLength="109.2" lengthAdjust="spacingAndGlyphs">git-autofixup</text>
-<text x="448.4" y="357.0" fill="#859289" textLength="84.0" lengthAdjust="spacingAndGlyphs">0.003001-2</text>
-<text x="658.4" y="357.0" fill="#83c092" textLength="25.2" lengthAdjust="spacingAndGlyphs">vcs</text>
+<text x="62.0" y="357.0" fill="#d3c6aa" textLength="193.2" lengthAdjust="spacingAndGlyphs">git-annex-remote-rclone</text>
+<text x="448.4" y="357.0" fill="#859289" textLength="42.0" lengthAdjust="spacingAndGlyphs">0.8-1</text>
+<text x="658.4" y="357.0" fill="#83c092" textLength="42.0" lengthAdjust="spacingAndGlyphs">utils</text>
 <line x1="839.0" y1="344.0" x2="839.0" y2="362.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="362.0" x2="24.2" y2="380.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>
 <line x1="839.0" y1="362.0" x2="839.0" y2="380.0" stroke="#a7c080" stroke-width="1.2" fill="none"/>

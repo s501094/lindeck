@@ -77,8 +77,10 @@ func preset(name string) (Theme, bool) {
 
 // Config is what lindeck saves in ~/.config/lindeck/config.json.
 type Config struct {
-	Theme  string `json:"theme"`            // a preset name, or "custom"
-	Custom *Theme `json:"custom,omitempty"` // colors used when Theme is "custom"
+	Theme    string         `json:"theme"`              // a preset name, or "custom"
+	Custom   *Theme         `json:"custom,omitempty"`   // colors used when Theme is "custom"
+	Sources  []CustomSource `json:"sources,omitempty"`  // package managers you added
+	Disabled []string       `json:"disabled,omitempty"` // source IDs hidden from lindeck
 }
 
 func configPath() (string, error) {

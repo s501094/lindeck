@@ -1,0 +1,164 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="964" height="562" viewBox="0 0 964 562">
+<rect width="100%" height="100%" rx="10" fill="#002b36"/>
+<circle cx="20" cy="18" r="6" fill="#ff5f57"/><circle cx="40" cy="18" r="6" fill="#febc2e"/><circle cx="60" cy="18" r="6" fill="#28c840"/>
+<text x="482" y="23" fill="#586e75" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" text-anchor="middle">lindeck</text>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,'DejaVu Sans Mono',monospace" font-size="14" xml:space="preserve">
+<path d="M28.4,65.0 Q24.2,65.0 24.2,74.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="28.4" y1="65.0" x2="440.0" y2="65.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="448.4" y="69.0" fill="#268bd2" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">lindeck</text>
+<line x1="515.6" y1="65.0" x2="935.6" y2="65.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<path d="M935.6,65.0 Q939.8,65.0 939.8,74.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="74.0" x2="24.2" y2="92.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="53.6" y="87.0" fill="#cb4b16" font-weight="bold" textLength="92.4" lengthAdjust="spacingAndGlyphs">1:Installed</text>
+<text x="171.2" y="87.0" fill="#cb4b16" font-weight="bold" textLength="50.4" lengthAdjust="spacingAndGlyphs">2:Scan</text>
+<text x="246.8" y="87.0" fill="#cb4b16" font-weight="bold" textLength="67.2" lengthAdjust="spacingAndGlyphs">3:Browse</text>
+<text x="330.8" y="87.0" fill="#cb4b16" font-weight="bold" textLength="92.4" lengthAdjust="spacingAndGlyphs">[4:Sources]</text>
+<text x="440.0" y="87.0" fill="#cb4b16" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">5:Theme</text>
+<line x1="939.8" y1="74.0" x2="939.8" y2="92.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="92.0" x2="24.2" y2="110.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">i</text>
+<text x="53.6" y="105.0" fill="#cb4b16" textLength="67.2" lengthAdjust="spacingAndGlyphs">:install</text>
+<text x="129.2" y="105.0" fill="#cb4b16" textLength="58.8" lengthAdjust="spacingAndGlyphs">manager</text>
+<text x="204.8" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">a</text>
+<text x="213.2" y="105.0" fill="#cb4b16" textLength="33.6" lengthAdjust="spacingAndGlyphs">:add</text>
+<text x="255.2" y="105.0" fill="#cb4b16" textLength="33.6" lengthAdjust="spacingAndGlyphs">repo</text>
+<text x="305.6" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">d</text>
+<text x="314.0" y="105.0" fill="#cb4b16" textLength="58.8" lengthAdjust="spacingAndGlyphs">:remove</text>
+<text x="389.6" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">e</text>
+<text x="398.0" y="105.0" fill="#cb4b16" textLength="126.0" lengthAdjust="spacingAndGlyphs">:enable/disable</text>
+<text x="540.8" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">n</text>
+<text x="549.2" y="105.0" fill="#cb4b16" textLength="33.6" lengthAdjust="spacingAndGlyphs">:new</text>
+<text x="591.2" y="105.0" fill="#cb4b16" textLength="50.4" lengthAdjust="spacingAndGlyphs">source</text>
+<text x="658.4" y="105.0" fill="#cb4b16" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">&lt;CR&gt;</text>
+<text x="692.0" y="105.0" fill="#cb4b16" textLength="58.8" lengthAdjust="spacingAndGlyphs">:browse</text>
+<text x="767.6" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">r</text>
+<text x="776.0" y="105.0" fill="#cb4b16" textLength="67.2" lengthAdjust="spacingAndGlyphs">:refresh</text>
+<text x="860.0" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">q</text>
+<text x="868.4" y="105.0" fill="#cb4b16" textLength="42.0" lengthAdjust="spacingAndGlyphs">:quit</text>
+<line x1="939.8" y1="92.0" x2="939.8" y2="110.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="110.0" x2="24.2" y2="128.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="28.4" y1="119.0" x2="935.6" y2="119.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="110.0" x2="939.8" y2="128.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="128.0" x2="24.2" y2="146.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="141.0" fill="#839396" textLength="58.8" lengthAdjust="spacingAndGlyphs">package</text>
+<text x="112.4" y="141.0" fill="#839396" textLength="58.8" lengthAdjust="spacingAndGlyphs">sources</text>
+<text x="179.6" y="141.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">—</text>
+<text x="196.4" y="141.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">5</text>
+<text x="213.2" y="141.0" fill="#839396" textLength="16.8" lengthAdjust="spacingAndGlyphs">of</text>
+<text x="238.4" y="141.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">7</text>
+<text x="255.2" y="141.0" fill="#839396" textLength="50.4" lengthAdjust="spacingAndGlyphs">active</text>
+<text x="330.8" y="141.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">●</text>
+<text x="347.6" y="141.0" fill="#586e75" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<text x="440.0" y="141.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">○</text>
+<text x="456.8" y="141.0" fill="#586e75" textLength="25.2" lengthAdjust="spacingAndGlyphs">not</text>
+<text x="490.4" y="141.0" fill="#586e75" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<text x="582.8" y="141.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">◌</text>
+<text x="599.6" y="141.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">disabled</text>
+<line x1="939.8" y1="128.0" x2="939.8" y2="146.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="146.0" x2="24.2" y2="164.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="146.0" x2="939.8" y2="164.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="164.0" x2="24.2" y2="182.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<rect x="28.4" y="164.0" width="16.8" height="18" fill="#073641"/>
+<rect x="45.2" y="164.0" width="8.4" height="18" fill="#073641"/>
+<text x="45.2" y="177.0" fill="#859900" textLength="8.4" lengthAdjust="spacingAndGlyphs">●</text>
+<rect x="53.6" y="164.0" width="100.8" height="18" fill="#073641"/>
+<text x="62.0" y="177.0" fill="#cb4b16" font-weight="bold" textLength="25.2" lengthAdjust="spacingAndGlyphs">apt</text>
+<rect x="154.4" y="164.0" width="252.0" height="18" fill="#073641"/>
+<text x="154.4" y="177.0" fill="#839396" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<rect x="406.4" y="164.0" width="210.0" height="18" fill="#073641"/>
+<text x="406.4" y="177.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">needs</text>
+<text x="456.8" y="177.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">sudo</text>
+<text x="498.8" y="177.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">·</text>
+<text x="515.6" y="177.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">1</text>
+<text x="532.4" y="177.0" fill="#586e75" textLength="84.0" lengthAdjust="spacingAndGlyphs">repository</text>
+<rect x="616.4" y="164.0" width="319.2" height="18" fill="#073641"/>
+<line x1="939.8" y1="164.0" x2="939.8" y2="182.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="182.0" x2="24.2" y2="200.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="78.8" y="195.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">↳</text>
+<text x="95.6" y="195.0" fill="#839396" textLength="117.6" lengthAdjust="spacingAndGlyphs">ubuntu.sources</text>
+<text x="339.2" y="195.0" fill="#586e75" textLength="327.6" lengthAdjust="spacingAndGlyphs">http://azure.archive.ubuntu.com/ubuntu/</text>
+<text x="683.6" y="195.0" fill="#586e75" textLength="252.0" lengthAdjust="spacingAndGlyphs">http://security.ubuntu.com/ub…</text>
+<line x1="939.8" y1="182.0" x2="939.8" y2="200.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="200.0" x2="24.2" y2="218.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="200.0" x2="939.8" y2="218.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="218.0" x2="24.2" y2="236.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="231.0" fill="#b58900" textLength="8.4" lengthAdjust="spacingAndGlyphs">○</text>
+<text x="62.0" y="231.0" fill="#cb4b16" font-weight="bold" textLength="67.2" lengthAdjust="spacingAndGlyphs">Homebrew</text>
+<text x="154.4" y="231.0" fill="#839396" textLength="25.2" lengthAdjust="spacingAndGlyphs">not</text>
+<text x="188.0" y="231.0" fill="#839396" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<text x="272.0" y="231.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">—</text>
+<text x="288.8" y="231.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">i</text>
+<text x="305.6" y="231.0" fill="#839396" textLength="16.8" lengthAdjust="spacingAndGlyphs">to</text>
+<text x="330.8" y="231.0" fill="#839396" textLength="58.8" lengthAdjust="spacingAndGlyphs">install</text>
+<line x1="939.8" y1="218.0" x2="939.8" y2="236.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="236.0" x2="24.2" y2="254.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="236.0" x2="939.8" y2="254.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="254.0" x2="24.2" y2="272.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="267.0" fill="#b58900" textLength="8.4" lengthAdjust="spacingAndGlyphs">○</text>
+<text x="62.0" y="267.0" fill="#cb4b16" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">Flatpak</text>
+<text x="154.4" y="267.0" fill="#839396" textLength="25.2" lengthAdjust="spacingAndGlyphs">not</text>
+<text x="188.0" y="267.0" fill="#839396" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<text x="272.0" y="267.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">—</text>
+<text x="288.8" y="267.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">i</text>
+<text x="305.6" y="267.0" fill="#839396" textLength="16.8" lengthAdjust="spacingAndGlyphs">to</text>
+<text x="330.8" y="267.0" fill="#839396" textLength="58.8" lengthAdjust="spacingAndGlyphs">install</text>
+<line x1="939.8" y1="254.0" x2="939.8" y2="272.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="272.0" x2="24.2" y2="290.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="272.0" x2="939.8" y2="290.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="290.0" x2="24.2" y2="308.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="303.0" fill="#859900" textLength="8.4" lengthAdjust="spacingAndGlyphs">●</text>
+<text x="62.0" y="303.0" fill="#cb4b16" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">Snap</text>
+<text x="154.4" y="303.0" fill="#839396" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<text x="406.4" y="303.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">needs</text>
+<text x="456.8" y="303.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">sudo</text>
+<line x1="939.8" y1="290.0" x2="939.8" y2="308.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="308.0" x2="24.2" y2="326.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="308.0" x2="939.8" y2="326.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="326.0" x2="24.2" y2="344.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="339.0" fill="#859900" textLength="8.4" lengthAdjust="spacingAndGlyphs">●</text>
+<text x="62.0" y="339.0" fill="#cb4b16" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">pipx</text>
+<text x="154.4" y="339.0" fill="#839396" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<text x="406.4" y="339.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">no</text>
+<text x="431.6" y="339.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">sudo</text>
+<line x1="939.8" y1="326.0" x2="939.8" y2="344.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="344.0" x2="24.2" y2="362.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="344.0" x2="939.8" y2="362.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="362.0" x2="24.2" y2="380.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="375.0" fill="#859900" textLength="8.4" lengthAdjust="spacingAndGlyphs">●</text>
+<text x="62.0" y="375.0" fill="#cb4b16" font-weight="bold" textLength="42.0" lengthAdjust="spacingAndGlyphs">cargo</text>
+<text x="154.4" y="375.0" fill="#839396" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<text x="406.4" y="375.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">no</text>
+<text x="431.6" y="375.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">sudo</text>
+<line x1="939.8" y1="362.0" x2="939.8" y2="380.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="380.0" x2="24.2" y2="398.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="380.0" x2="939.8" y2="398.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="398.0" x2="24.2" y2="416.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="411.0" fill="#859900" textLength="8.4" lengthAdjust="spacingAndGlyphs">●</text>
+<text x="62.0" y="411.0" fill="#cb4b16" font-weight="bold" textLength="25.2" lengthAdjust="spacingAndGlyphs">npm</text>
+<text x="154.4" y="411.0" fill="#839396" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<text x="406.4" y="411.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">no</text>
+<text x="431.6" y="411.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">sudo</text>
+<line x1="939.8" y1="398.0" x2="939.8" y2="416.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="416.0" x2="24.2" y2="434.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="416.0" x2="939.8" y2="434.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="434.0" x2="24.2" y2="452.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="447.0" fill="#859900" textLength="8.4" lengthAdjust="spacingAndGlyphs">+</text>
+<text x="62.0" y="447.0" fill="#839396" textLength="25.2" lengthAdjust="spacingAndGlyphs">add</text>
+<text x="95.6" y="447.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">a</text>
+<text x="112.4" y="447.0" fill="#839396" textLength="50.4" lengthAdjust="spacingAndGlyphs">custom</text>
+<text x="171.2" y="447.0" fill="#839396" textLength="58.8" lengthAdjust="spacingAndGlyphs">package</text>
+<text x="238.4" y="447.0" fill="#839396" textLength="58.8" lengthAdjust="spacingAndGlyphs">manager</text>
+<text x="322.4" y="447.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">n</text>
+<line x1="939.8" y1="434.0" x2="939.8" y2="452.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="452.0" x2="24.2" y2="470.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="452.0" x2="939.8" y2="470.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="470.0" x2="24.2" y2="488.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="470.0" x2="939.8" y2="488.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="488.0" x2="24.2" y2="506.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="488.0" x2="939.8" y2="506.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="506.0" x2="24.2" y2="524.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="506.0" x2="939.8" y2="524.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<path d="M24.2,524.0 Q24.2,533.0 28.4,533.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="28.4" y1="533.0" x2="935.6" y2="533.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<path d="M939.8,524.0 Q939.8,533.0 935.6,533.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+</g></svg>

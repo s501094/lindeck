@@ -1,5 +1,6 @@
-// Command lindeck is a floating-window package manager for apt, in the style
-// of plugdeck.nvim: browse and search the archive, health-scan installed
+// Command lindeck is a floating-window package manager for apt, Homebrew,
+// Flatpak, Snap, pipx, cargo, npm and any source you add, in the style of
+// plugdeck.nvim: browse and search, manage repositories, health-scan installed
 // packages, and install/remove without typing sudo (it prompts for you).
 package main
 
@@ -11,13 +12,15 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-const usage = `lindeck — package manager front end
+const usage = `lindeck — one TUI for apt, Homebrew, Flatpak, Snap, pipx, cargo and npm
 
 usage:
-  lindeck [query]            open the TUI (optionally searching for query)
-  lindeck search <query>     print matching packages
-  lindeck install <pkg>...   install packages (prompts for sudo)
-  lindeck remove <pkg>...    remove packages (prompts for sudo)
+  lindeck [query]            open the TUI (optionally searching apt for query)
+  lindeck search <query>     print matching apt packages
+  lindeck install <pkg>...   install apt packages (prompts for sudo)
+  lindeck remove <pkg>...    remove apt packages (prompts for sudo)
+
+In the TUI: 1-5 switch tabs, [ ] switch source, 4 manages sources and repositories.
 `
 
 func main() {

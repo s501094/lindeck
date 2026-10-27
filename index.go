@@ -7,8 +7,10 @@ import (
 	"strings"
 )
 
-// Pkg is one available package from the apt cache.
+// Pkg is one available package from any source. Section is the apt
+// section, the Flatpak remote, or the snap's confinement, depending on source.
 type Pkg struct {
+	Source                                 string
 	Name, Version, Section, Desc, Homepage string
 }
 
@@ -18,7 +20,7 @@ type Section struct {
 	Count int
 }
 
-// Index is the whole apt cache held in memory, for fast search and browsing.
+// Index is a source's whole catalog held in memory, for fast search and browsing.
 type Index struct {
 	byName   map[string]*Pkg
 	all      []*Pkg
@@ -27,6 +29,14 @@ type Index struct {
 
 // loadIndex parses `apt-cache dumpavail` (~90k packages, under a second).
 func loadIndex() (*Index, error) {
+	pkgs, err := aptCatalog()
+	if err != nil {
+		return nil, err
+	}
+	return newIndex(pkgs, true), nil
+}
+
+func aptCatalog() ([]*Pkg, error) {
 	cmd := exec.Command("apt-cache", "dumpavail")
 	out, err := cmd.StdoutPipe()
 	if err != nil {
@@ -36,16 +46,13 @@ func loadIndex() (*Index, error) {
 		return nil, err
 	}
 
-	idx := &Index{byName: map[string]*Pkg{}}
-	counts := map[string]int{}
-	cur := &Pkg{}
+	var pkgs []*Pkg
+	cur := &Pkg{Source: "apt"}
 	flush := func() {
-		if cur.Name != "" && idx.byName[cur.Name] == nil {
-			idx.byName[cur.Name] = cur
-			idx.all = append(idx.all, cur)
-			counts[cur.Section]++
+		if cur.Name != "" {
+			pkgs = append(pkgs, cur)
 		}
-		cur = &Pkg{}
+		cur = &Pkg{Source: "apt"}
 	}
 
 	sc := bufio.NewScanner(out)
@@ -84,15 +91,32 @@ func loadIndex() (*Index, error) {
 	if err := cmd.Wait(); err != nil {
 		return nil, err
 	}
+	return pkgs, nil
+}
 
-	sort.Slice(idx.all, func(i, j int) bool { return idx.all[i].Name < idx.all[j].Name })
-	for name, n := range counts {
-		if name != "" {
-			idx.sections = append(idx.sections, Section{name, n})
+// newIndex builds an index from a catalog, keeping the first entry for each
+// name. With sections, packages are also counted per Section for browsing.
+func newIndex(pkgs []*Pkg, sections bool) *Index {
+	idx := &Index{byName: map[string]*Pkg{}}
+	counts := map[string]int{}
+	for _, p := range pkgs {
+		if p.Name == "" || idx.byName[p.Name] != nil {
+			continue
 		}
+		idx.byName[p.Name] = p
+		idx.all = append(idx.all, p)
+		counts[p.Section]++
 	}
-	sort.Slice(idx.sections, func(i, j int) bool { return idx.sections[i].Name < idx.sections[j].Name })
-	return idx, nil
+	sort.Slice(idx.all, func(i, j int) bool { return idx.all[i].Name < idx.all[j].Name })
+	if sections {
+		for name, n := range counts {
+			if name != "" {
+				idx.sections = append(idx.sections, Section{name, n})
+			}
+		}
+		sort.Slice(idx.sections, func(i, j int) bool { return idx.sections[i].Name < idx.sections[j].Name })
+	}
+	return idx
 }
 
 // Search matches names and descriptions, ranking exact, prefix, and name
@@ -114,6 +138,8 @@ func (idx *Index) Search(term string) []*Pkg {
 		case strings.HasPrefix(p.Name, term):
 			hits = append(hits, hit{p, 1})
 		case strings.Contains(p.Name, term):
+			hits = append(hits, hit{p, 2})
+		case strings.Contains(strings.ToLower(p.Name), term):
 			hits = append(hits, hit{p, 2})
 		case strings.Contains(strings.ToLower(p.Desc), term):
 			hits = append(hits, hit{p, 3})

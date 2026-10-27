@@ -11,10 +11,9 @@
 <line x1="24.2" y1="74.0" x2="24.2" y2="92.0" stroke="#b3befe" stroke-width="1.2" fill="none"/>
 <text x="53.6" y="87.0" fill="#fab387" font-weight="bold" textLength="92.4" lengthAdjust="spacingAndGlyphs">1:Installed</text>
 <text x="171.2" y="87.0" fill="#fab387" font-weight="bold" textLength="50.4" lengthAdjust="spacingAndGlyphs">2:Scan</text>
-<text x="246.8" y="87.0" fill="#fab387" font-weight="bold" textLength="42.0" lengthAdjust="spacingAndGlyphs">3:apt</text>
-<text x="305.6" y="87.0" fill="#fab387" font-weight="bold" textLength="75.6" lengthAdjust="spacingAndGlyphs">[4:Theme]</text>
-<text x="406.4" y="87.0" fill="#fab387" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">source:</text>
-<text x="473.6" y="87.0" fill="#fab387" font-weight="bold" textLength="25.2" lengthAdjust="spacingAndGlyphs">apt</text>
+<text x="246.8" y="87.0" fill="#fab387" font-weight="bold" textLength="67.2" lengthAdjust="spacingAndGlyphs">3:Browse</text>
+<text x="339.2" y="87.0" fill="#fab387" font-weight="bold" textLength="75.6" lengthAdjust="spacingAndGlyphs">4:Sources</text>
+<text x="431.6" y="87.0" fill="#fab387" font-weight="bold" textLength="75.6" lengthAdjust="spacingAndGlyphs">[5:Theme]</text>
 <line x1="939.8" y1="74.0" x2="939.8" y2="92.0" stroke="#b3befe" stroke-width="1.2" fill="none"/>
 <line x1="24.2" y1="92.0" x2="24.2" y2="110.0" stroke="#b3befe" stroke-width="1.2" fill="none"/>
 <text x="45.2" y="105.0" fill="#fab387" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">&lt;CR&gt;</text>
@@ -28,7 +27,7 @@
 <text x="364.4" y="105.0" fill="#fab387" textLength="42.0" lengthAdjust="spacingAndGlyphs">theme</text>
 <text x="414.8" y="105.0" fill="#fab387" textLength="33.6" lengthAdjust="spacingAndGlyphs">into</text>
 <text x="456.8" y="105.0" fill="#fab387" textLength="50.4" lengthAdjust="spacingAndGlyphs">custom</text>
-<text x="524.0" y="105.0" fill="#fab387" font-weight="bold" textLength="25.2" lengthAdjust="spacingAndGlyphs">1-4</text>
+<text x="524.0" y="105.0" fill="#fab387" font-weight="bold" textLength="25.2" lengthAdjust="spacingAndGlyphs">1-5</text>
 <text x="549.2" y="105.0" fill="#fab387" textLength="42.0" lengthAdjust="spacingAndGlyphs">:tabs</text>
 <text x="608.0" y="105.0" fill="#fab387" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">q</text>
 <text x="616.4" y="105.0" fill="#fab387" textLength="42.0" lengthAdjust="spacingAndGlyphs">:quit</text>

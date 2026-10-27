@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="964" height="562" viewBox="0 0 964 562">
+<rect width="100%" height="100%" rx="10" fill="#002b36"/>
+<circle cx="20" cy="18" r="6" fill="#ff5f57"/><circle cx="40" cy="18" r="6" fill="#febc2e"/><circle cx="60" cy="18" r="6" fill="#28c840"/>
+<text x="482" y="23" fill="#586e75" font-family="ui-sans-serif,system-ui,sans-serif" font-size="13" text-anchor="middle">lindeck</text>
+<g font-family="ui-monospace,SFMono-Regular,Menlo,Consolas,'DejaVu Sans Mono',monospace" font-size="14" xml:space="preserve">
+<path d="M28.4,65.0 Q24.2,65.0 24.2,74.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="28.4" y1="65.0" x2="440.0" y2="65.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="448.4" y="69.0" fill="#268bd2" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">lindeck</text>
+<line x1="515.6" y1="65.0" x2="935.6" y2="65.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<path d="M935.6,65.0 Q939.8,65.0 939.8,74.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="74.0" x2="24.2" y2="92.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="53.6" y="87.0" fill="#cb4b16" font-weight="bold" textLength="92.4" lengthAdjust="spacingAndGlyphs">1:Installed</text>
+<text x="171.2" y="87.0" fill="#cb4b16" font-weight="bold" textLength="50.4" lengthAdjust="spacingAndGlyphs">2:Scan</text>
+<text x="238.4" y="87.0" fill="#cb4b16" font-weight="bold" textLength="84.0" lengthAdjust="spacingAndGlyphs">[3:Browse]</text>
+<text x="339.2" y="87.0" fill="#cb4b16" font-weight="bold" textLength="75.6" lengthAdjust="spacingAndGlyphs">4:Sources</text>
+<text x="440.0" y="87.0" fill="#cb4b16" font-weight="bold" textLength="58.8" lengthAdjust="spacingAndGlyphs">5:Theme</text>
+<line x1="939.8" y1="74.0" x2="939.8" y2="92.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="92.0" x2="24.2" y2="110.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">[</text>
+<text x="62.0" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">]</text>
+<text x="70.4" y="105.0" fill="#cb4b16" textLength="58.8" lengthAdjust="spacingAndGlyphs">:switch</text>
+<text x="137.6" y="105.0" fill="#cb4b16" textLength="50.4" lengthAdjust="spacingAndGlyphs">source</text>
+<text x="204.8" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">/</text>
+<text x="213.2" y="105.0" fill="#cb4b16" textLength="58.8" lengthAdjust="spacingAndGlyphs">:search</text>
+<text x="288.8" y="105.0" fill="#cb4b16" font-weight="bold" textLength="33.6" lengthAdjust="spacingAndGlyphs">&lt;CR&gt;</text>
+<text x="322.4" y="105.0" fill="#cb4b16" textLength="67.2" lengthAdjust="spacingAndGlyphs">:details</text>
+<text x="406.4" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">i</text>
+<text x="414.8" y="105.0" fill="#cb4b16" textLength="67.2" lengthAdjust="spacingAndGlyphs">:install</text>
+<text x="498.8" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">d</text>
+<text x="507.2" y="105.0" fill="#cb4b16" textLength="58.8" lengthAdjust="spacingAndGlyphs">:remove</text>
+<text x="582.8" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">o</text>
+<text x="591.2" y="105.0" fill="#cb4b16" textLength="75.6" lengthAdjust="spacingAndGlyphs">:homepage</text>
+<text x="683.6" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">r</text>
+<text x="692.0" y="105.0" fill="#cb4b16" textLength="67.2" lengthAdjust="spacingAndGlyphs">:refresh</text>
+<text x="776.0" y="105.0" fill="#cb4b16" font-weight="bold" textLength="25.2" lengthAdjust="spacingAndGlyphs">1-5</text>
+<text x="801.2" y="105.0" fill="#cb4b16" textLength="42.0" lengthAdjust="spacingAndGlyphs">:tabs</text>
+<text x="860.0" y="105.0" fill="#cb4b16" font-weight="bold" textLength="8.4" lengthAdjust="spacingAndGlyphs">q</text>
+<text x="868.4" y="105.0" fill="#cb4b16" textLength="42.0" lengthAdjust="spacingAndGlyphs">:quit</text>
+<line x1="939.8" y1="92.0" x2="939.8" y2="110.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="110.0" x2="24.2" y2="128.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="28.4" y1="119.0" x2="935.6" y2="119.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="110.0" x2="939.8" y2="128.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="128.0" x2="24.2" y2="146.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="141.0" fill="#586e75" textLength="58.8" lengthAdjust="spacingAndGlyphs">source:</text>
+<text x="120.8" y="141.0" fill="#839396" textLength="25.2" lengthAdjust="spacingAndGlyphs">apt</text>
+<text x="171.2" y="141.0" fill="#839396" textLength="33.6" lengthAdjust="spacingAndGlyphs">snap</text>
+<text x="230.0" y="141.0" fill="#839396" textLength="33.6" lengthAdjust="spacingAndGlyphs">pipx</text>
+<text x="288.8" y="141.0" fill="#839396" textLength="42.0" lengthAdjust="spacingAndGlyphs">cargo</text>
+<text x="347.6" y="141.0" fill="#cb4b16" font-weight="bold" textLength="42.0" lengthAdjust="spacingAndGlyphs">[npm]</text>
+<text x="414.8" y="141.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">[</text>
+<text x="431.6" y="141.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">]</text>
+<text x="448.4" y="141.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">switch</text>
+<line x1="939.8" y1="128.0" x2="939.8" y2="146.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="146.0" x2="24.2" y2="164.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="159.0" fill="#839396" textLength="58.8" lengthAdjust="spacingAndGlyphs">results</text>
+<text x="112.4" y="159.0" fill="#839396" textLength="25.2" lengthAdjust="spacingAndGlyphs">for</text>
+<text x="146.0" y="159.0" fill="#839396" textLength="84.0" lengthAdjust="spacingAndGlyphs">&#x27;prettier&#x27;</text>
+<text x="238.4" y="159.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">—</text>
+<text x="255.2" y="159.0" fill="#839396" textLength="16.8" lengthAdjust="spacingAndGlyphs">40</text>
+<text x="280.4" y="159.0" fill="#839396" textLength="67.2" lengthAdjust="spacingAndGlyphs">packages</text>
+<text x="372.8" y="159.0" fill="#859900" textLength="8.4" lengthAdjust="spacingAndGlyphs">✓</text>
+<text x="389.6" y="159.0" fill="#839396" textLength="8.4" lengthAdjust="spacingAndGlyphs">=</text>
+<text x="406.4" y="159.0" fill="#839396" textLength="58.8" lengthAdjust="spacingAndGlyphs">already</text>
+<text x="473.6" y="159.0" fill="#839396" textLength="75.6" lengthAdjust="spacingAndGlyphs">installed</text>
+<line x1="939.8" y1="146.0" x2="939.8" y2="164.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="164.0" x2="24.2" y2="182.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="939.8" y1="164.0" x2="939.8" y2="182.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="182.0" x2="24.2" y2="200.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="62.0" y="195.0" fill="#839396" textLength="67.2" lengthAdjust="spacingAndGlyphs">prettier</text>
+<text x="448.4" y="195.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">3.9.10</text>
+<line x1="939.8" y1="182.0" x2="939.8" y2="200.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="200.0" x2="24.2" y2="218.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="95.6" y="213.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">Prettier</text>
+<text x="171.2" y="213.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">is</text>
+<text x="196.4" y="213.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">an</text>
+<text x="221.6" y="213.0" fill="#586e75" textLength="92.4" lengthAdjust="spacingAndGlyphs">opinionated</text>
+<text x="322.4" y="213.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">code</text>
+<text x="364.4" y="213.0" fill="#586e75" textLength="75.6" lengthAdjust="spacingAndGlyphs">formatter</text>
+<line x1="939.8" y1="200.0" x2="939.8" y2="218.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="218.0" x2="24.2" y2="236.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<rect x="28.4" y="218.0" width="420.0" height="18" fill="#073641"/>
+<text x="62.0" y="231.0" fill="#839396" textLength="184.8" lengthAdjust="spacingAndGlyphs">eslint-plugin-prettier</text>
+<rect x="448.4" y="218.0" width="210.0" height="18" fill="#073641"/>
+<text x="448.4" y="231.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">5.5.7</text>
+<rect x="658.4" y="218.0" width="277.2" height="18" fill="#073641"/>
+<line x1="939.8" y1="218.0" x2="939.8" y2="236.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="236.0" x2="24.2" y2="254.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<rect x="28.4" y="236.0" width="327.6" height="18" fill="#073641"/>
+<text x="95.6" y="249.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">Runs</text>
+<text x="137.6" y="249.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">prettier</text>
+<text x="213.2" y="249.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">as</text>
+<text x="238.4" y="249.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">an</text>
+<text x="263.6" y="249.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">eslint</text>
+<text x="322.4" y="249.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">rule</text>
+<rect x="356.0" y="236.0" width="579.6" height="18" fill="#073641"/>
+<line x1="939.8" y1="236.0" x2="939.8" y2="254.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="254.0" x2="24.2" y2="272.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="62.0" y="267.0" fill="#839396" textLength="193.2" lengthAdjust="spacingAndGlyphs">prettier-linter-helpers</text>
+<text x="448.4" y="267.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">1.0.1</text>
+<line x1="939.8" y1="254.0" x2="939.8" y2="272.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="272.0" x2="24.2" y2="290.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="95.6" y="285.0" fill="#586e75" textLength="75.6" lengthAdjust="spacingAndGlyphs">Utilities</text>
+<text x="179.6" y="285.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">to</text>
+<text x="204.8" y="285.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">help</text>
+<text x="246.8" y="285.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">expose</text>
+<text x="305.6" y="285.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">prettier</text>
+<text x="381.2" y="285.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">output</text>
+<text x="440.0" y="285.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">in</text>
+<text x="465.2" y="285.0" fill="#586e75" textLength="58.8" lengthAdjust="spacingAndGlyphs">linting</text>
+<text x="532.4" y="285.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">tools</text>
+<line x1="939.8" y1="272.0" x2="939.8" y2="290.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="290.0" x2="24.2" y2="308.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="62.0" y="303.0" fill="#839396" textLength="184.8" lengthAdjust="spacingAndGlyphs">eslint-config-prettier</text>
+<text x="448.4" y="303.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">10.1.8</text>
+<line x1="939.8" y1="290.0" x2="939.8" y2="308.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="308.0" x2="24.2" y2="326.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="95.6" y="321.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">Turns</text>
+<text x="146.0" y="321.0" fill="#586e75" textLength="25.2" lengthAdjust="spacingAndGlyphs">off</text>
+<text x="179.6" y="321.0" fill="#586e75" textLength="25.2" lengthAdjust="spacingAndGlyphs">all</text>
+<text x="213.2" y="321.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">rules</text>
+<text x="263.6" y="321.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">that</text>
+<text x="305.6" y="321.0" fill="#586e75" textLength="25.2" lengthAdjust="spacingAndGlyphs">are</text>
+<text x="339.2" y="321.0" fill="#586e75" textLength="92.4" lengthAdjust="spacingAndGlyphs">unnecessary</text>
+<text x="440.0" y="321.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">or</text>
+<text x="465.2" y="321.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">might</text>
+<text x="515.6" y="321.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">conflict</text>
+<text x="591.2" y="321.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">with</text>
+<text x="633.2" y="321.0" fill="#586e75" textLength="75.6" lengthAdjust="spacingAndGlyphs">Prettier.</text>
+<line x1="939.8" y1="308.0" x2="939.8" y2="326.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="326.0" x2="24.2" y2="344.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="62.0" y="339.0" fill="#839396" textLength="184.8" lengthAdjust="spacingAndGlyphs">prettier-plugin-svelte</text>
+<text x="448.4" y="339.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">4.1.1</text>
+<line x1="939.8" y1="326.0" x2="939.8" y2="344.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="344.0" x2="24.2" y2="362.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="95.6" y="357.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">Svelte</text>
+<text x="154.4" y="357.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">plugin</text>
+<text x="213.2" y="357.0" fill="#586e75" textLength="25.2" lengthAdjust="spacingAndGlyphs">for</text>
+<text x="246.8" y="357.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">prettier</text>
+<line x1="939.8" y1="344.0" x2="939.8" y2="362.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="362.0" x2="24.2" y2="380.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="62.0" y="375.0" fill="#839396" textLength="151.2" lengthAdjust="spacingAndGlyphs">stylelint-prettier</text>
+<text x="448.4" y="375.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">5.0.3</text>
+<line x1="939.8" y1="362.0" x2="939.8" y2="380.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="380.0" x2="24.2" y2="398.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="95.6" y="393.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">Runs</text>
+<text x="137.6" y="393.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">prettier</text>
+<text x="213.2" y="393.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">as</text>
+<text x="238.4" y="393.0" fill="#586e75" textLength="16.8" lengthAdjust="spacingAndGlyphs">an</text>
+<text x="263.6" y="393.0" fill="#586e75" textLength="75.6" lengthAdjust="spacingAndGlyphs">stylelint</text>
+<text x="347.6" y="393.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">rule</text>
+<line x1="939.8" y1="380.0" x2="939.8" y2="398.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="398.0" x2="24.2" y2="416.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="62.0" y="411.0" fill="#839396" textLength="184.8" lengthAdjust="spacingAndGlyphs">volar-service-prettier</text>
+<text x="448.4" y="411.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">0.0.71</text>
+<line x1="939.8" y1="398.0" x2="939.8" y2="416.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="416.0" x2="24.2" y2="434.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="95.6" y="429.0" fill="#586e75" textLength="75.6" lengthAdjust="spacingAndGlyphs">Integrate</text>
+<text x="179.6" y="429.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">Prettier</text>
+<text x="255.2" y="429.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">into</text>
+<text x="297.2" y="429.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">Volar</text>
+<line x1="939.8" y1="416.0" x2="939.8" y2="434.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="434.0" x2="24.2" y2="452.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="62.0" y="447.0" fill="#839396" textLength="176.4" lengthAdjust="spacingAndGlyphs">@svgr/plugin-prettier</text>
+<text x="448.4" y="447.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">8.1.0</text>
+<line x1="939.8" y1="434.0" x2="939.8" y2="452.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="452.0" x2="24.2" y2="470.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="95.6" y="465.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">Format</text>
+<text x="154.4" y="465.0" fill="#586e75" textLength="33.6" lengthAdjust="spacingAndGlyphs">code</text>
+<text x="196.4" y="465.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">using</text>
+<text x="246.8" y="465.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">Prettier</text>
+<line x1="939.8" y1="452.0" x2="939.8" y2="470.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="470.0" x2="24.2" y2="488.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="62.0" y="483.0" fill="#839396" textLength="226.8" lengthAdjust="spacingAndGlyphs">prettier-plugin-tailwindcss</text>
+<text x="448.4" y="483.0" fill="#586e75" textLength="42.0" lengthAdjust="spacingAndGlyphs">0.8.1</text>
+<line x1="939.8" y1="470.0" x2="939.8" y2="488.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="488.0" x2="24.2" y2="506.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="95.6" y="501.0" fill="#586e75" textLength="8.4" lengthAdjust="spacingAndGlyphs">A</text>
+<text x="112.4" y="501.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">Prettier</text>
+<text x="188.0" y="501.0" fill="#586e75" textLength="50.4" lengthAdjust="spacingAndGlyphs">plugin</text>
+<text x="246.8" y="501.0" fill="#586e75" textLength="25.2" lengthAdjust="spacingAndGlyphs">for</text>
+<text x="280.4" y="501.0" fill="#586e75" textLength="58.8" lengthAdjust="spacingAndGlyphs">sorting</text>
+<text x="347.6" y="501.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">Tailwind</text>
+<text x="423.2" y="501.0" fill="#586e75" textLength="25.2" lengthAdjust="spacingAndGlyphs">CSS</text>
+<text x="456.8" y="501.0" fill="#586e75" textLength="67.2" lengthAdjust="spacingAndGlyphs">classes.</text>
+<line x1="939.8" y1="488.0" x2="939.8" y2="506.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="24.2" y1="506.0" x2="24.2" y2="524.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<text x="45.2" y="519.0" fill="#586e75" textLength="75.6" lengthAdjust="spacingAndGlyphs">cancelled</text>
+<line x1="939.8" y1="506.0" x2="939.8" y2="524.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<path d="M24.2,524.0 Q24.2,533.0 28.4,533.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<line x1="28.4" y1="533.0" x2="935.6" y2="533.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+<path d="M939.8,524.0 Q939.8,533.0 935.6,533.0" stroke="#93a1a1" stroke-width="1.2" fill="none"/>
+</g></svg>

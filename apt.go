@@ -8,9 +8,12 @@ import (
 	"strings"
 )
 
-// Inst is one package dpkg knows is installed (or broken mid-install).
+// Inst is one installed package from any source. For apt, Manual separates
+// packages you asked for from dependencies, and State holds a broken dpkg state.
 type Inst struct {
+	Source                 string
 	Name, Version, Summary string
+	Origin                 string // Flatpak remote the app came from
 	Manual                 bool
 	State                  string // "" when healthy, otherwise a dpkg state like "half-configured"
 }
@@ -52,7 +55,7 @@ func loadInstalled() []Inst {
 		if st == 'n' || st == 'c' { // not installed / only config files left
 			continue
 		}
-		in := Inst{Name: f[1], Version: f[2], Summary: f[3], Manual: manual[f[1]]}
+		in := Inst{Source: "apt", Name: f[1], Version: f[2], Summary: f[3], Manual: manual[f[1]]}
 		if st != 'i' {
 			in.State = dpkgStates[st]
 			if in.State == "" {
@@ -67,6 +70,7 @@ func loadInstalled() []Inst {
 
 // Check is one health-scan result.
 type Check struct {
+	Source string
 	Name   string
 	Status string // "ok" | "warn" | "err"
 	Notes  []string
@@ -81,7 +85,7 @@ func runScan(inst []Inst) []Check {
 		if c := checks[name]; c != nil {
 			return c
 		}
-		c := &Check{Name: name, Status: "ok"}
+		c := &Check{Source: "apt", Name: name, Status: "ok"}
 		checks[name] = c
 		return c
 	}

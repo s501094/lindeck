@@ -2,19 +2,20 @@
 
 # 📦 lindeck
 
-**A floating-window TUI package manager for apt — no `sudo` typing required.**
+**One floating-window TUI for apt, Homebrew, Flatpak, Snap, pipx, cargo and npm — no `sudo` typing required.**
 
-Browse and search the whole apt archive, health-scan your system, and install, remove, or upgrade packages from one keyboard-driven window. Inspired by plugdeck.nvim.
+Browse and search every package manager on your system, add their repositories, health-scan everything at once, and install, remove, or upgrade from one keyboard-driven window. Missing a package manager? lindeck installs it, or you can plug in your own. Inspired by plugdeck.nvim.
 
 [![Go](https://img.shields.io/github/go-mod/go-version/s501094/lindeck?style=flat-square&logo=go&logoColor=white&color=2aa198)](go.mod)
 [![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20WSL2-268bd2?style=flat-square&logo=linux&logoColor=white)](#prerequisites)
-[![apt](https://img.shields.io/badge/backend-apt%20%2F%20dpkg-cb4b16?style=flat-square&logo=debian&logoColor=white)](#how-it-works)
+[![Sources](https://img.shields.io/badge/sources-apt%20%C2%B7%20brew%20%C2%B7%20flatpak%20%C2%B7%20snap%20%C2%B7%20pipx%20%C2%B7%20cargo%20%C2%B7%20npm-cb4b16?style=flat-square&logo=debian&logoColor=white)](#sources)
 [![Bubble Tea](https://img.shields.io/badge/built%20with-Bubble%20Tea-d33682?style=flat-square)](https://github.com/charmbracelet/bubbletea)
 [![Last commit](https://img.shields.io/github/last-commit/s501094/lindeck?style=flat-square&color=859900)](https://github.com/s501094/lindeck/commits/main)
 
 [Features](#features) ·
 [Install](#installation) ·
 [Usage](#usage) ·
+[Sources](#sources) ·
 [Themes](#themes) ·
 [Keys](#keybindings) ·
 [sudo](#how-sudo-is-handled) ·
@@ -31,14 +32,14 @@ Browse and search the whole apt archive, health-scan your system, and install, r
 
 ## ✨ Features
 
-lindeck has four tabs. Switch between them with <kbd>1</kbd> – <kbd>4</kbd>.
+lindeck has five tabs. Switch between them with <kbd>1</kbd> – <kbd>5</kbd>.
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
 ### 🗂️ 1 · Installed
-Packages you installed yourself (`◉ manual`). Press <kbd>m</kbd> to also show packages that came in as dependencies (`◍ auto`). Broken dpkg states show in red as `✗ ERROR`.
+Everything you've installed, from every source, with a column showing where each came from. <kbd>[</kbd> <kbd>]</kbd> filter to one source, and <kbd>m</kbd> also shows dependencies (`◍`). Broken dpkg states show in red as `✗ ERROR`.
 
 <kbd>a</kbd> add · <kbd>d</kbd> remove · <kbd>Enter</kbd> details
 
@@ -46,9 +47,9 @@ Packages you installed yourself (`◉ manual`). Press <kbd>m</kbd> to also show 
 <td width="50%" valign="top">
 
 ### 🩺 2 · Scan
-A health check with a summary line: **ok** / **warnings** / **errors**. It flags broken installs, pending upgrades, held packages and orphaned dependencies, with errors listed first.
+A health check across every source, with a summary line: **ok** / **warnings** / **errors**. It flags broken installs, pending upgrades (apt, Homebrew, Flatpak, Snap, npm), held packages and orphaned dependencies, with errors listed first.
 
-<kbd>u</kbd> upgrade · <kbd>U</kbd> upgrade all · <kbd>A</kbd> autoremove · <kbd>R</kbd> apt update
+<kbd>u</kbd> upgrade · <kbd>U</kbd> upgrade everything · <kbd>A</kbd> autoremove · <kbd>R</kbd> apt update
 
 </td>
 </tr>
@@ -67,8 +68,8 @@ A health check with a summary line: **ok** / **warnings** / **errors**. It flags
 <tr>
 <td width="50%" valign="top">
 
-### 🔎 3 · apt browser
-Every apt section (admin, devel, editors, games, …) with a package count for each. Open a section, or search names and descriptions. Installed packages are marked with `✓`, and each view remembers where your cursor was.
+### 🔎 3 · Browse
+Browse or search any source — <kbd>[</kbd> <kbd>]</kbd> switches between them. apt opens on its sections (admin, devel, editors, …); Homebrew and Flatpak list their whole catalog; Snap, cargo, npm and pipx search their registries. Installed packages are marked with `✓`.
 
 <kbd>/</kbd> search · <kbd>i</kbd> install · <kbd>o</kbd> homepage · <kbd>Backspace</kbd> back
 
@@ -92,6 +93,34 @@ Any root action opens a masked `sudo password:` prompt (skipped if sudo already 
 
 </td>
 </tr>
+<tr>
+<td width="50%" valign="top">
+
+### 📚 4 · Sources
+Every package manager lindeck knows, whether it's installed, and its repositories: apt repositories and PPAs, Homebrew taps, Flatpak remotes. Install a missing manager, add or remove repositories, or add a package manager of your own.
+
+<kbd>i</kbd> install manager · <kbd>a</kbd> add repo · <kbd>n</kbd> new source · <kbd>e</kbd> enable/disable
+
+</td>
+<td width="50%" valign="top">
+
+### 🎨 5 · Theme
+10 built-in themes with live preview, plus your own custom colors. See [Themes](#themes).
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+<img src="assets/sources.svg" alt="Sources tab: package managers, their repositories, and install offers" width="100%">
+
+</td>
+<td width="50%" valign="top">
+
+<img src="assets/browse-npm.svg" alt="Browsing npm: searching the npm registry" width="100%">
+
+</td>
+</tr>
 </table>
 
 <details>
@@ -110,11 +139,66 @@ Any root action opens a masked `sudo password:` prompt (skipped if sudo already 
 
 ---
 
+<a id="sources"></a>
+
+## 📚 Sources
+
+lindeck works with seven package managers out of the box, and you can add any other. Everything installed is shown together, and every action runs that source's own command, which you can see as the first line of the log pane.
+
+| Source | Browse / search | Needs sudo | Repositories | If it's missing, <kbd>i</kbd> on the Sources tab |
+|---|---|:-:|---|---|
+| **apt** | whole catalog, by section | yes | repositories & PPAs | — (always on) |
+| **Homebrew** | whole catalog | no | taps | runs Homebrew's official installer |
+| **Flatpak** | whole catalog, every remote | no (`--user`) | remotes | installs flatpak with apt, adds Flathub |
+| **Snap** | Snap Store search | yes | — | installs snapd with apt |
+| **pipx** | exact name on PyPI | no | — | installs pipx with apt |
+| **cargo** | crates.io search | no | — | runs rustup's official installer |
+| **npm** | npm registry search | only if your global prefix isn't yours | — | installs npm with apt |
+
+Sources you don't have are listed as `○ not installed`. Installing one always asks first (`Install Homebrew? (y/N)`), and the log pane shows exactly what runs. Press <kbd>e</kbd> to hide a source you don't want lindeck to touch.
+
+### Adding repositories
+
+Move to a source on the Sources tab and press <kbd>a</kbd>:
+
+| Source | What to type |
+|---|---|
+| apt | `ppa:neovim-ppa/unstable`, or a full line like `deb [signed-by=/usr/share/keyrings/x.gpg] https://example.com/apt stable main` |
+| Homebrew | `user/repo` (a tap on GitHub), or `user/repo https://git.example.com/repo.git` |
+| Flatpak | `name https://example.com/repo.flatpakrepo`, or just the `.flatpakrepo` URL |
+
+<kbd>d</kbd> on a repository removes it, after asking. Your distro's own sources (like `ubuntu.sources`) are marked `(system)` and lindeck won't remove them.
+
+### Adding your own package manager
+
+If someone creates a package manager lindeck doesn't know, press <kbd>n</kbd> on the Sources tab and answer a few questions: its name, the command that shows it's installed, and the commands to search, list, install, remove and upgrade. `{query}` stands for the search text and `{pkg}` for the package name; both are safely shell-quoted. It's saved to your config file, where you can also add or edit one by hand:
+
+```json
+{
+  "sources": [
+    {
+      "id": "nix",
+      "name": "Nix",
+      "bin": "nix-env",
+      "search": "nix search nixpkgs {query} --json | jq -r 'to_entries[] | .value.pname + \" \" + .value.version + \" \" + .value.description'",
+      "list": "nix-env -q",
+      "install": "nix-env -iA nixpkgs.{pkg}",
+      "remove": "nix-env -e {pkg}",
+      "upgrade": "nix-env -u {pkg}"
+    }
+  ]
+}
+```
+
+Only `name`, `bin` and `install` are required. `search` and `list` should print one package per line as `name [version] [description…]`. Set `"root": true` if installs need sudo, and `"setup"` to a command that installs the manager itself, so <kbd>i</kbd> can offer it.
+
+---
+
 <a id="themes"></a>
 
 ## 🎨 Themes
 
-lindeck ships with **10 themes**, and you can build your own. Press <kbd>4</kbd> to open the Theme tab:
+lindeck ships with **10 themes**, and you can build your own. Press <kbd>5</kbd> to open the Theme tab:
 
 - **Move** over a theme to preview it live across the whole window.
 - **<kbd>Enter</kbd>** applies it. Your choice is saved, so it's there next time.
@@ -189,6 +273,7 @@ Your choice is saved to `~/.config/lindeck/config.json` (or `$XDG_CONFIG_HOME/li
 | Requirement | Notes |
 |---|---|
 | 🐧 **An apt-based Linux distro** | Debian, Ubuntu, Pop!_OS, Mint, WSL2 Ubuntu, … lindeck calls `apt-get`, `apt-cache`, `apt-mark` and `dpkg-query`. |
+| 📦 **Other package managers** *(optional)* | Homebrew, Flatpak, Snap, pipx, cargo and npm are picked up automatically if installed — or lindeck can install them for you. |
 | 🔑 **sudo** | Your user must be in the sudoers file (on Ubuntu, the `sudo` group). |
 | 🐹 **Go 1.22 or newer** | Only needed to build. The result is a single binary with no runtime dependencies. |
 | 🖥️ **A Unicode, 256/truecolor terminal** | For the box drawing, icons and colors. kitty, WezTerm, Alacritty, Windows Terminal and GNOME Terminal all work. |
@@ -203,7 +288,7 @@ sudo -v             # confirms you have sudo rights
 ```
 
 > [!NOTE]
-> lindeck only supports apt today. dnf and pacman backends are on the [roadmap](#roadmap).
+> apt is required because it's the system package manager lindeck builds on. dnf and pacman support is on the [roadmap](#roadmap).
 
 ---
 
@@ -240,7 +325,7 @@ go build -o ~/.local/bin/lindeck .
 rm "$(command -v lindeck)"
 ```
 
-To also remove your saved theme:
+To also remove your saved settings (theme, custom sources, disabled sources):
 
 ```sh
 rm -r ~/.config/lindeck
@@ -256,7 +341,7 @@ rm -r ~/.config/lindeck
 
 ```sh
 lindeck              # open on the Installed tab
-lindeck ripgrep      # open on the apt tab, already searched for "ripgrep"
+lindeck ripgrep      # open on the Browse tab, already searched for "ripgrep" in apt
 ```
 
 **A typical install:**
@@ -265,6 +350,8 @@ lindeck ripgrep      # open on the apt tab, already searched for "ripgrep"
 2. Move to `htop` with <kbd>j</kbd>/<kbd>k</kbd> and press <kbd>i</kbd>.
 3. Type your sudo password at the `sudo password: ••••` prompt and press <kbd>Enter</kbd>.
 4. apt's output scrolls in the log pane. When it finishes, the status line shows `✓ install htop done` and `htop` gets its `✓`.
+
+To install from somewhere else, press <kbd>]</kbd> on the Browse tab until the source you want is highlighted, then search as usual. Sources that don't need root, like Homebrew or npm, skip the password step.
 
 ### Command line
 
@@ -275,7 +362,7 @@ lindeck remove htop           # remove packages
 lindeck help                  # usage
 ```
 
-The `install` and `remove` subcommands run apt directly in your terminal. sudo asks for your password as usual, and apt asks for confirmation before making changes.
+The command-line subcommands work with apt. The `install` and `remove` subcommands run apt directly in your terminal. sudo asks for your password as usual, and apt asks for confirmation before making changes.
 
 ---
 
@@ -285,11 +372,12 @@ The `install` and `remove` subcommands run apt directly in your terminal. sudo a
 
 | Key | Action |
 |---|---|
-| <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> | Switch to the Installed / Scan / apt / Theme tab |
+| <kbd>1</kbd> – <kbd>5</kbd> | Switch to the Installed / Scan / Browse / Sources / Theme tab |
+| <kbd>[</kbd> / <kbd>]</kbd> | Previous / next source (Browse), or source filter (Installed) |
 | <kbd>j</kbd> / <kbd>k</kbd> (or arrow keys) | Move down / up |
 | <kbd>g</kbd> / <kbd>G</kbd> | Jump to the top / bottom |
 | <kbd>Ctrl</kbd>+<kbd>d</kbd> / <kbd>Ctrl</kbd>+<kbd>u</kbd> | Half page down / up |
-| <kbd>/</kbd> | Search apt |
+| <kbd>/</kbd> | Search the current source |
 | <kbd>Enter</kbd> | Details (or open a section) |
 | <kbd>o</kbd> | Open the package homepage |
 | <kbd>c</kbd> | Clear the output log and status line |
@@ -301,9 +389,9 @@ The `install` and `remove` subcommands run apt directly in your terminal. sudo a
 
 | Key | Action |
 |---|---|
-| <kbd>a</kbd> | Install a package by name |
+| <kbd>a</kbd> | Install a package by exact name, from the source shown on the Browse tab |
 | <kbd>d</kbd> | Remove the selected package |
-| <kbd>m</kbd> | Toggle between your packages only and all packages, including dependencies |
+| <kbd>m</kbd> | Also show dependencies (apt's auto packages, snap bases) |
 | <kbd>r</kbd> | Reload the installed list |
 
 </details>
@@ -315,22 +403,38 @@ The `install` and `remove` subcommands run apt directly in your terminal. sudo a
 |---|---|
 | <kbd>s</kbd> / <kbd>r</kbd> | Rescan |
 | <kbd>u</kbd> | Upgrade the selected package |
-| <kbd>U</kbd> | Upgrade everything (`apt-get upgrade`) |
+| <kbd>U</kbd> | Upgrade everything, in every source (root steps first, so one password covers them) |
 | <kbd>A</kbd> | Remove orphaned dependencies (`apt-get autoremove`) |
 | <kbd>R</kbd> | Refresh package lists (`apt-get update`), then reload |
 
 </details>
 
 <details>
-<summary><b>🔎 apt tab</b></summary>
+<summary><b>🔎 Browse tab</b></summary>
 
 | Key | Action |
 |---|---|
-| <kbd>t</kbd> / <kbd>-</kbd> | Show sections |
+| <kbd>[</kbd> / <kbd>]</kbd> | Switch source |
+| <kbd>t</kbd> / <kbd>-</kbd> | Show sections (apt) |
 | <kbd>Backspace</kbd> | Go back to sections, or forward to the last results |
 | <kbd>i</kbd> | Install the selected package |
 | <kbd>d</kbd> | Remove the selected package |
-| <kbd>r</kbd> | Reload the apt index |
+| <kbd>r</kbd> | Reload the catalog, or repeat the search |
+
+</details>
+
+<details>
+<summary><b>📚 Sources tab</b></summary>
+
+| Key | Action |
+|---|---|
+| <kbd>Enter</kbd> | Browse the selected source |
+| <kbd>i</kbd> | Install a missing package manager (asks first) |
+| <kbd>a</kbd> | Add a repository, tap or remote to the selected source |
+| <kbd>d</kbd> | Remove the selected repository, or a custom source |
+| <kbd>e</kbd> | Enable / disable the selected source |
+| <kbd>n</kbd> | Add your own package manager |
+| <kbd>r</kbd> | Reload repositories |
 
 </details>
 
@@ -361,7 +465,7 @@ The `install` and `remove` subcommands run apt directly in your terminal. sudo a
 
 ## 🔐 How sudo is handled
 
-lindeck runs as your normal user. It never runs as root and never needs to be started with `sudo`. Only the apt command runs as root.
+lindeck runs as your normal user. It never runs as root and never needs to be started with `sudo`. Only commands that need root run through sudo: apt, Snap, adding apt repositories, and npm when its global prefix isn't yours. Homebrew, Flatpak (`--user`), pipx and cargo don't ask for a password (the one exception is removing a system-wide Flatpak remote).
 
 ```mermaid
 flowchart LR
@@ -384,7 +488,7 @@ flowchart LR
 > [!IMPORTANT]
 > The password lives in memory only for that one operation. It is never written to disk, logged, or kept for the next action. sudo's own rules apply as usual: failed attempts are logged, and lockout policies such as `faillock` still count.
 
-Each action runs as one specific apt command, which you can see as the first line of the log pane:
+For apt, each action runs one specific command, which you can see as the first line of the log pane:
 
 | Action | Command run as root |
 |---|---|
@@ -396,7 +500,10 @@ Each action runs as one specific apt command, which you can see as the first lin
 | Refresh lists | `apt-get update` |
 
 > [!WARNING]
-> Actions run with `-y`, so apt won't ask "Do you want to continue?". Check the package name before pressing <kbd>d</kbd> or <kbd>U</kbd>.
+> Actions run non-interactively (`-y`, `--noninteractive`), so nothing asks "Do you want to continue?". Check the package name before pressing <kbd>d</kbd> or <kbd>U</kbd>.
+
+> [!NOTE]
+> Homebrew's installer needs sudo once, to create `/home/linuxbrew`. lindeck asks for your password first so sudo has it cached, then runs the installer as you.
 
 ---
 
@@ -407,24 +514,33 @@ Each action runs as one specific apt command, which you can see as the first lin
 ```
 lindeck/
 ├── main.go      Entry point: decides between the TUI and the search / install / remove commands
-├── tui.go       The Bubble Tea interface: tabs, rendering, keys, prompts, the log pane
-├── index.go     Loads the full apt package index into memory; search and sections
-├── apt.go       Installed packages, the health scan, package details, opening homepages
-├── sudo.go      Password check and running commands as root with streamed output
-├── theme.go     The 10 themes, custom colors, and loading / saving config.json
-├── assets/      Screenshots used in this README
-├── go.mod       Module definition and dependencies
+├── tui.go              The Bubble Tea interface: tabs, rendering, keys, prompts, the log pane
+├── tui_sources.go      The Sources tab and the custom-source form
+├── tui_theme.go        The Theme tab
+├── sources.go          What a source is, and running jobs with streamed output
+├── sources_builtin.go  apt, Homebrew, Flatpak, Snap, pipx, cargo and npm
+├── sources_custom.go   Package managers you define in config.json
+├── index.go            In-memory catalogs: search and sections
+├── apt.go              apt's installed list, health scan and package details
+├── sudo.go             Password check and the command-line mode's sudo
+├── theme.go            The 10 themes, custom colors, and loading / saving config.json
+├── assets/             Screenshots used in this README
+├── go.mod              Module definition and dependencies
 └── go.sum
 ```
 
 | File | What's in it |
 |---|---|
 | `main.go` | Parses arguments. With no arguments, or with a search term, it opens the TUI. `search`, `install`, `remove` and `help` run without the TUI. |
-| `tui.go` | The `model` holds all UI state: current tab, installed list, apt index, scan results, cursor memory per view, the active prompt, the running job and its output. `Update` handles keys and background results, and `View` draws the window. Rows are built only for the items on screen, so a search with tens of thousands of results stays fast. |
-| `index.go` | `loadIndex` parses `apt-cache dumpavail` (about 88k packages) into a map and a sorted list, and counts packages per section. `"universe/devel"` and `"devel"` are merged into one section. `Search` ranks matches, and `InSection` lists a section. |
+| `tui.go` | The `model` holds all UI state: current tab, the sources, installed packages and catalogs per source, scan results, cursor memory per view, the active prompt, the running job and its output. `Update` handles keys and background results, and `View` draws the window. Rows are built only for the items on screen, so a search with tens of thousands of results stays fast. |
+| `sources.go` | `Source` describes a package manager as a set of optional functions: catalog, search, installed, outdated, info, install / remove / upgrade, repositories, and setup. `runStream` runs a `job` (through sudo or not) and streams its output; jobs can chain, as in "install flatpak, then add Flathub". |
+| `sources_builtin.go` | The seven built-in sources, each mapping lindeck's actions to its tool's real commands and parsing their output. |
+| `sources_custom.go` | Turns a `CustomSource` from config.json into a `Source`, filling `{query}` / `{pkg}` into shell commands with safe quoting. |
+| `tui_sources.go` | The Sources tab: source and repository rows, its keys, and the step-by-step form for adding a package manager. |
+| `index.go` | `newIndex` turns a catalog into a searchable index. For apt, `aptCatalog` parses `apt-cache dumpavail` (about 88k packages) and packages are counted per section. `"universe/devel"` and `"devel"` are merged into one section. `Search` ranks matches, and `InSection` lists a section. |
 | `apt.go` | `loadInstalled` combines `dpkg-query` (versions, descriptions, dpkg state) with `apt-mark showmanual`. `runScan` builds the health report from dpkg states, `apt list --upgradable`, `apt-mark showhold` and a dry run of `apt-get -s autoremove`. `pkgDetails` formats `apt-cache show` output. `openURL` uses `wslview` or `xdg-open`. |
 | `theme.go` | `Theme` holds the 11 colors. `presets` are the built-in themes. `loadConfig` / `saveConfig` read and write `config.json`, `resolve` fills in missing custom colors, and `applyTheme` rebuilds every style the UI draws with. |
-| `sudo.go` | `sudoCached`, `sudoValidate`, `sudoStream` (runs a root command in the background and sends each output line back to the UI) and `sudoInteractive` (used by the command-line mode). |
+| `sudo.go` | `sudoCached`, `sudoValidate` and `sudoInteractive` (used by the command-line mode). |
 
 **Built with** [Bubble Tea](https://github.com/charmbracelet/bubbletea) (TUI framework), [Bubbles](https://github.com/charmbracelet/bubbles) (text inputs) and [Lip Gloss](https://github.com/charmbracelet/lipgloss) (colors and layout).
 
@@ -439,16 +555,15 @@ flowchart TB
     K([Keypress]) --> U[Update]
     U --> M[(model state)]
     M --> V[View<br/>floating window]
-    U -. background .-> I[index.go<br/>apt-cache dumpavail]
-    U -. background .-> P[apt.go<br/>dpkg-query · apt-mark<br/>apt list · apt-cache show]
-    U -. background .-> S[sudo.go<br/>sudo -S apt-get …]
-    I -- results --> U
-    P -- results --> U
-    S -- output lines --> U
+    U -. background .-> C[Sources<br/>apt · brew · flatpak · snap<br/>pipx · cargo · npm · custom]
+    C -- catalogs · search results<br/>installed · upgrades · repos --> U
+    U -. background .-> J[runStream<br/>job, via sudo if needed]
+    J -- output lines --> U
 ```
 
-- ⚡ **Never freezes.** Everything slow runs in the background: loading the index, reading the installed list, the scan, details, and root commands. Each one reports back to `Update` when it finishes.
-- 🧠 **Instant search.** The apt index is loaded once at startup (about a second) and kept in memory, so searching and browsing sections are instant. It reloads after <kbd>R</kbd> (apt update) or <kbd>r</kbd> on the apt tab.
+- ⚡ **Never freezes.** Everything slow runs in the background: loading catalogs, reading installed lists, registry searches, the scan, details, and install jobs. Each one reports back to `Update` when it finishes.
+- 🧠 **Instant search where possible.** apt, Homebrew and Flatpak catalogs are loaded once and kept in memory, so filtering them is instant. Snap, cargo, npm and pipx are searched online when you press <kbd>Enter</kbd>.
+- 🔍 **Detected once.** Each package manager is looked up once at startup, and again after lindeck installs one. (On WSL, searching the Windows directories on your `PATH` for a missing command takes about 200 ms, so lindeck avoids repeating it.)
 - 🔄 **Always current.** When a root action finishes, the installed list reloads and the scan runs again, so the `✓` markers and the health report stay up to date.
 
 ---
@@ -466,7 +581,7 @@ The install directory isn't on your `PATH`. See [Installation](#installation).
 <details>
 <summary>Search finds nothing, or packages seem missing</summary>
 
-Your package lists are out of date. Press <kbd>R</kbd> on the Scan tab (or run `sudo apt update`), then <kbd>r</kbd> on the apt tab.
+Your package lists are out of date. Press <kbd>R</kbd> on the Scan tab (or run `sudo apt update`), then <kbd>r</kbd> on the Browse tab.
 </details>
 
 <details>
@@ -494,6 +609,29 @@ Use a terminal and font with Unicode support, and make sure `TERM` advertises 25
 </details>
 
 <details>
+<summary><code>brew</code> works in lindeck but not in my shell after installing Homebrew</summary>
+
+lindeck finds Homebrew in `/home/linuxbrew/.linuxbrew` even when it isn't on your `PATH`. To use `brew` in your shell too, add this to your shell config, as Homebrew's installer suggests:
+
+```sh
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"                  # bash / zsh
+/home/linuxbrew/.linuxbrew/bin/brew shellenv | source                   # fish
+```
+</details>
+
+<details>
+<summary>Flatpak apps don't appear in my app menu</summary>
+
+Log out and back in once after installing Flatpak, so your desktop picks up `~/.local/share/flatpak/exports`.
+</details>
+
+<details>
+<summary>A source shows an error on the Installed tab</summary>
+
+The message comes from that tool. Run the same command yourself (for example `snap list` or `npm ls -g`) to see the full error, then press <kbd>r</kbd>.
+</details>
+
+<details>
 <summary>A package shows <code>✗ ERROR</code></summary>
 
 An install was interrupted. Run `sudo dpkg --configure -a`, then rescan with <kbd>s</kbd>.
@@ -509,7 +647,9 @@ An install was interrupted. Run `sudo dpkg --configure -a`, then rescan with <kb
 - [x] Health scan with upgrade / autoremove actions
 - [x] In-app sudo prompt with streamed output
 - [x] 10 themes plus custom colors, saved per user
-- [ ] **No-sudo sources:** GitHub release binaries and AppImages into `~/.local/bin`, plus Flatpak `--user`
+- [x] **More sources:** Homebrew, Flatpak, Snap, pipx, cargo and npm, with repository management
+- [x] **Your own sources:** plug in any package manager from config.json or the Sources tab
+- [ ] **No-sudo binaries:** GitHub release binaries and AppImages into `~/.local/bin`
 - [ ] **More backends:** dnf and pacman, detected automatically
 - [ ] **Lockfile and sync:** save your installed set and rebuild it on another machine with `lindeck sync`
 - [ ] **More configuration:** window size and icons

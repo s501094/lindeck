@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -173,13 +174,36 @@ func runStream(j *job, password string, lines chan<- string, done chan<- error) 
 		sc := bufio.NewScanner(pr)
 		sc.Buffer(make([]byte, 64<<10), 1<<20)
 		for sc.Scan() {
-			lines <- sc.Text()
+			if l := cleanLine(sc.Text()); l != "" {
+				lines <- l
+			}
 		}
 		close(lines)
 	}()
 	err := cmd.Wait()
 	pw.Close()
 	done <- err
+}
+
+var ansiRe = regexp.MustCompile(`\x1b\[[0-9;?]*[ -/]*[@-~]|\x1b\][^\x07\x1b]*(\x07|\x1b\\)|\x1b[()][0-9A-Za-z]`)
+
+// cleanLine makes a line of tool output safe for the log pane. Progress
+// meters redraw with carriage returns ("Reading database ... 5%\r10%"), so
+// only the last state is kept; colors and other control characters, which
+// would corrupt the window, are removed.
+func cleanLine(l string) string {
+	l = ansiRe.ReplaceAllString(l, "")
+	if i := strings.LastIndex(strings.TrimRight(l, "\r"), "\r"); i >= 0 {
+		l = l[i+1:]
+	}
+	l = strings.ReplaceAll(l, "\t", "    ")
+	l = strings.Map(func(r rune) rune {
+		if r < 0x20 || r == 0x7f {
+			return -1
+		}
+		return r
+	}, l)
+	return strings.TrimRight(l, " ")
 }
 
 // output runs a command and returns its stdout. Commands that talk to the

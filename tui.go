@@ -19,6 +19,7 @@ import (
 var (
 	sText, sTitle, sComment, sOk, sWarn, sErr lipgloss.Style
 	sDir, sBorder, sWinTtl, sPrompt           lipgloss.Style
+	sHint, sHintKey                           lipgloss.Style
 )
 
 var icons = struct{ ok, warn, err, unknown, manual, auto string }{
@@ -745,16 +746,21 @@ func (m model) rows(it item) [][]seg {
 		if in.Manual {
 			icon, status = icons.manual, "manual"
 		}
+		nw, vw, showSummary := m.columns(13, 38, 24) // icon, status and spacing
+		summary := ""
+		if showSummary {
+			summary = in.Summary
+		}
 		ist := sDir
 		if in.State != "" {
 			icon, ist, status, nameSt = icons.err, sErr, "ERROR", sErr
 		}
 		return [][]seg{{
 			{"  ", sText}, {icon, ist},
-			{fmt.Sprintf(" %-38s ", trunc(in.Name, 38)), nameSt},
-			{fmt.Sprintf("%-10s ", status), nameSt},
-			{fmt.Sprintf("%-24s ", trunc(in.Version, 24)), sComment},
-			{in.Summary, sComment},
+			{fmt.Sprintf(" %-*s ", nw, trunc(in.Name, nw)), nameSt},
+			{fmt.Sprintf("%-7s ", status), nameSt},
+			{fmt.Sprintf("%-*s ", vw, trunc(in.Version, vw)), sComment},
+			{summary, sComment},
 		}}
 
 	case it.check != nil:
@@ -770,7 +776,8 @@ func (m model) rows(it item) [][]seg {
 		if len(r.Notes) > 0 {
 			note = r.Notes[0]
 		}
-		rows := [][]seg{{{"  ", sText}, {icon, st}, {fmt.Sprintf(" %-38s ", trunc(r.Name, 38)), sText}, {note, sText}}}
+		nw := max(14, min(38, (m.innerWidth()-6)*45/100))
+		rows := [][]seg{{{"  ", sText}, {icon, st}, {fmt.Sprintf(" %-*s ", nw, trunc(r.Name, nw)), sText}, {note, sText}}}
 		for _, n := range r.Notes[min(1, len(r.Notes)):] {
 			rows = append(rows, []seg{{"      · " + n, sComment}})
 		}
@@ -790,13 +797,18 @@ func (m model) rows(it item) [][]seg {
 
 	case it.pkg != nil:
 		p := it.pkg
+		nw, vw, showSection := m.columns(5, 45, 24)
+		section := ""
+		if showSection {
+			section = p.Section
+		}
 		mark, mst := " ", sText
 		if m.instSet[p.Name] {
 			mark, mst = "✓", sOk
 		}
 		return [][]seg{
-			{{"  ", sText}, {mark, mst}, {fmt.Sprintf(" %-45s ", trunc(p.Name, 45)), sText},
-				{fmt.Sprintf("%-24s ", trunc(p.Version, 24)), sComment}, {p.Section, sDir}},
+			{{"  ", sText}, {mark, mst}, {fmt.Sprintf(" %-*s ", nw, trunc(p.Name, nw)), sText},
+				{fmt.Sprintf("%-*s ", vw, trunc(p.Version, vw)), sComment}, {section, sDir}},
 			{{"        " + p.Desc, sComment}},
 		}
 	}
@@ -805,7 +817,57 @@ func (m model) rows(it item) [][]seg {
 
 func (m model) winSize() (w, h int) {
 	w, h = int(float64(m.width)*0.85), int(float64(m.height)*0.8)
+	if m.width < 120 { // narrow terminal: use nearly all of it
+		w = m.width - 2
+	}
 	return max(w, min(m.width, 60)), max(h, min(m.height, 16))
+}
+
+// innerWidth is the usable width inside the window border.
+func (m model) innerWidth() int {
+	w, _ := m.winSize()
+	return w - 2
+}
+
+// hintLines wraps the key hints to the window width, breaking only between
+// hints so none is cut in half. Keys are bold; both share the tab-line color
+// so the hints stay readable over transparent or image backgrounds.
+func (m model) hintLines() [][]seg {
+	width := m.innerWidth() - 2
+	var lines [][]seg
+	var cur []seg
+	used := 0
+	for _, h := range strings.Split(m.footer(), "  ") {
+		key, label, _ := strings.Cut(h, ":")
+		n := len([]rune(h))
+		if used > 0 && used+2+n > width {
+			lines, cur, used = append(lines, cur), nil, 0
+		}
+		if used == 0 {
+			cur = append(cur, seg{"  ", sHint})
+		} else {
+			cur = append(cur, seg{"  ", sHint})
+			used += 2
+		}
+		cur = append(cur, seg{key, sHintKey}, seg{":" + label, sHint})
+		used += n
+	}
+	return append(lines, cur)
+}
+
+// columns splits the space left after fixed parts between a name and a
+// version column, dropping the trailing description when it would be too
+// narrow to read. fixed is the width of everything except those columns.
+func (m model) columns(fixed, maxName, maxVer int) (name, ver int, showRest bool) {
+	avail := m.innerWidth() - fixed
+	name, ver = maxName, maxVer
+	if rest := avail - name - ver - 2; rest >= 16 {
+		return name, ver, true
+	}
+	// shrink to fit, keeping names readable first
+	name = max(14, min(maxName, avail*55/100))
+	ver = max(8, min(maxVer, avail-name-2))
+	return name, ver, avail-name-ver-2 >= 16
 }
 
 const outputRows = 8
@@ -813,7 +875,7 @@ const outputRows = 8
 // bodyHeight is how many rows the scrolling list gets inside the window.
 func (m model) bodyHeight() int {
 	_, h := m.winSize()
-	used := 2 + 3 + 1 // border, tabs/footer/rule, status line
+	used := 2 + 2 + len(m.hintLines()) + 1 // border, tab line + rule, hints, status line
 	if m.inputKind != "" {
 		used++
 	}
@@ -864,7 +926,9 @@ func (m model) View() string {
 	add := func(segs []seg, sel bool) { rows = append(rows, renderRow(segs, iw, sel)) }
 
 	add(m.tabLine(), false)
-	add([]seg{{"  " + m.footer(), sComment}}, false)
+	for _, l := range m.hintLines() {
+		add(l, false)
+	}
 	add([]seg{{strings.Repeat("─", iw), sBorder}}, false)
 
 	bh := m.bodyHeight()

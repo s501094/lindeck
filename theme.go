@@ -173,5 +173,7 @@ func applyTheme(t Theme) {
 	sBorder = lipgloss.NewStyle().Foreground(c(t.Border))
 	sWinTtl = lipgloss.NewStyle().Foreground(c(t.Title)).Bold(true)
 	sPrompt = lipgloss.NewStyle().Foreground(c(t.Prompt)).Bold(true)
+	sHint = lipgloss.NewStyle().Foreground(c(t.Tabs))
+	sHintKey = sHint.Bold(true)
 	selBg = c(t.Selection)
 }
